@@ -25,7 +25,7 @@ String generateRandomString(int len) {
 void shareToApps(String roomId) async {
   await FlutterShare.share(
     title: 'Video Call Invite',
-    text: 'Hey There, Lets Connect via Video call in App using code :' + roomId,
+    text: 'Hey There, Lets Connect via Video call in App using code : ' + roomId,
   );
 }
 

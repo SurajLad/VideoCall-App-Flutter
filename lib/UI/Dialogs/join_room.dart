@@ -1,13 +1,12 @@
 import 'package:chat_app/Helpers/text_styles.dart';
+import 'package:chat_app/Helpers/utls.dart';
 import 'package:chat_app/UI/videocall_page.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class JoinRoomDialog extends StatefulWidget {
-  @override
-  _JoinRoomDialogState createState() => _JoinRoomDialogState();
-}
+class JoinRoomDialog extends StatelessWidget {
+  final TextEditingController roomTxtController = TextEditingController();
 
-class _JoinRoomDialogState extends State<JoinRoomDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -22,16 +21,10 @@ class _JoinRoomDialogState extends State<JoinRoomDialog> {
           const SizedBox(
             height: 10,
           ),
-          Text(
-            "Enter Room id to Join.",
-            style: regularTxtStyle.copyWith(
-                color: const Color(0xFF1A1E78), fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
           TextFormField(
+            controller: roomTxtController,
             decoration: InputDecoration(
+                hintText: "Enter room id to join",
                 focusedBorder: OutlineInputBorder(
                     borderSide:
                         BorderSide(color: const Color(0xFF1A1E78), width: 2)),
@@ -48,13 +41,30 @@ class _JoinRoomDialogState extends State<JoinRoomDialog> {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
             color: const Color(0xFF1A1E78),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => VideoCallScreen(
-                            channelName: "demo",
-                          )));
+            onPressed: () async {
+              if (roomTxtController.text.isNotEmpty) {
+                bool isPermissionGranted =
+                    await handlePermissionsForCall(context);
+                if (isPermissionGranted) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => VideoCallScreen(
+                                channelName: roomTxtController.text,
+                              )));
+                } else {
+                  Get.snackbar("Failed", "Enter Room-Id to Join.",
+                      backgroundColor: Colors.white,
+                      colorText: Color(0xFF1A1E78),
+                      snackPosition: SnackPosition.BOTTOM);
+                }
+              } else {
+                Get.snackbar(
+                    "Failed", "Microphone Permission Required for Video Call.",
+                    backgroundColor: Colors.white,
+                    colorText: Color(0xFF1A1E78),
+                    snackPosition: SnackPosition.BOTTOM);
+              }
             },
             child: Row(
               mainAxisSize: MainAxisSize.min,

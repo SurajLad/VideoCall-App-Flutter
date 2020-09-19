@@ -2,6 +2,7 @@ import 'package:chat_app/UI/Dialogs/create_room.dart';
 import 'package:chat_app/UI/Dialogs/join_room.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/Helpers/text_styles.dart';
+import 'package:get/get.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -21,14 +22,14 @@ class HomePage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Agora App - Temp Chat/Video With Your Friends.",
+                  "VideoChat App",
                   style: largeTxtStyle.copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 10),
-                // Text(
-                //   "1 | 2 | 3",
-                //   style: largeTxtStyle.copyWith(fontWeight: FontWeight.w600),
-                // ),
+                Text(
+                  "Easy connect with friends via video call.",
+                  style: largeTxtStyle.copyWith(fontWeight: FontWeight.w600),
+                ),
               ],
             ),
           ),
@@ -158,41 +159,10 @@ class HomePage extends StatelessWidget {
         backgroundColor: const Color(0xFF1A1E78),
         child: Icon(Icons.thumb_up_alt_outlined),
         onPressed: () {
-          //   showDialog(
-          //       context: context,
-          //       barrierDismissible: false,
-          //       builder: (_) {
-          //         return AlertDialog(
-          //           shape: RoundedRectangleBorder(
-          //               borderRadius: BorderRadius.circular(15)),
-          //           title: Text("Create Chat"),
-          //           content: Column(
-          //             mainAxisSize: MainAxisSize.min,
-          //             children: [
-          //               FlatButton(
-          //                 shape: RoundedRectangleBorder(
-          //                     borderRadius: BorderRadius.circular(6)),
-          //                 color: const Color(0xFF1A1E78),
-          //                 onPressed: () {},
-          //                 child: Text(
-          //                   "Create Video Chat",
-          //                   style: regularTxtStyle,
-          //                 ),
-          //               ),
-          //               FlatButton(
-          //                 shape: RoundedRectangleBorder(
-          //                     borderRadius: BorderRadius.circular(6)),
-          //                 color: const Color(0xFF1A1E78),
-          //                 onPressed: () {},
-          //                 child: Text(
-          //                   "Create Group Chat",
-          //                   style: regularTxtStyle,
-          //                 ),
-          //               ),
-          //             ],
-          //           ),
-          //         );
-          //       });
+          Get.snackbar("Liked ?", "Please ★ My Project On Git :) ",
+              backgroundColor: Colors.white,
+              colorText: Color(0xFF1A1E78),
+              snackPosition: SnackPosition.BOTTOM);
         },
       ),
     );

@@ -2,6 +2,7 @@ import 'package:chat_app/Helpers/text_styles.dart';
 import 'package:chat_app/Helpers/utls.dart';
 import 'package:chat_app/UI/videocall_page.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CreateRoomDialog extends StatefulWidget {
   @override
@@ -70,8 +71,14 @@ class _CreateRoomDialogState extends State<CreateRoomDialog> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => VideoCallScreen(
-                                  channelName: "demo",
+                                  channelName: roomId,
                                 )));
+                  } else {
+                    Get.snackbar("Failed",
+                        "Microphone Permission Required for Video Call.",
+                        backgroundColor: Colors.white,
+                        colorText: Color(0xFF1A1E78),
+                        snackPosition: SnackPosition.BOTTOM);
                   }
                 },
                 child: Row(

@@ -23,7 +23,6 @@ class VideoCallScreenState extends State<VideoCallScreen> {
   final _infoStrings = <String>[];
 
   bool backCamera = false;
-  bool isMeetingPaused = false;
 
   double screenWidth, screenHeight;
 
@@ -35,14 +34,10 @@ class VideoCallScreenState extends State<VideoCallScreen> {
   // Meeeting Timer Helper
   Timer meetingTimer;
 
-  int timerStart = 100;
+  int timerStart = 0;
   String timerTxt = "00:00";
 
-  bool endCallFromBtn = false;
-  bool endCallFromMsg = false;
-
   int networkQuality = 3;
-  String networkQualityStr = "N/w Quality";
   Color networkQualityBarColor = Colors.green;
 
   void startMeetingTimer() async {
@@ -111,8 +106,6 @@ class VideoCallScreenState extends State<VideoCallScreen> {
 
   @override
   void initState() {
-    //  Wakelock.enable();
-
     // initialize agora sdk
     initAgoraRTC();
 
@@ -130,17 +123,16 @@ class VideoCallScreenState extends State<VideoCallScreen> {
     await AgoraRtcEngine.enableWebSdkInteroperability(true);
 
     await AgoraRtcEngine.setParameters(
-        '''{\"che.video.lowBitRateStreamParameter\":{\"width\":320,\"height\":180,\"frameRate\":15,\"bitRate\":100}}''');
+        '''{\"che.video.lowBitRateStreamParameter\":{\"width\":640,\"height\":360,\"frameRate\":30,\"bitRate\":800}}''');
     await AgoraRtcEngine.joinChannel(null, widget.channelName, null, 0);
   }
 
-  /// Create agora sdk instance and initialize
   Future<void> _initAgoraRtcEngine() async {
     await AgoraRtcEngine.create(getAgoraAppId());
     await AgoraRtcEngine.enableVideo();
   }
 
-  /// Add agora event handlers
+  /// agora event handlers
   void _addAgoraEventHandlers() {
     AgoraRtcEngine.onError = (dynamic code) {
       print("======== AGORA ERROR  : ======= " + code.toString());
@@ -152,9 +144,6 @@ class VideoCallScreenState extends State<VideoCallScreen> {
     };
     AgoraRtcEngine.onUserOffline = (int uid, int reason) {
       print("======== AGORA User OFFLINE : ======= " + reason.toString());
-      if (reason == 1) {
-        // USER DROPPED by Force Close Or Network Crash
-      }
 
       setState(() {
         final info = 'userOffline: $uid';
@@ -186,7 +175,7 @@ class VideoCallScreenState extends State<VideoCallScreen> {
 
     AgoraRtcEngine.onUserJoined = (int uid, int elapsed) {
       print("======================================");
-      print("             MR JOINED                ");
+      print("             User Joined              ");
       print("======================================");
 
       if (meetingTimer != null) {
@@ -213,15 +202,8 @@ class VideoCallScreenState extends State<VideoCallScreen> {
     AgoraRtcEngine.onNetworkQuality = (int uid, int txQuality, int rxQuality) {
       setState(() {
         networkQuality = getNetworkQuality(txQuality);
-        // networkQualityStr = getNetworkQualityString(txQuality);
         networkQualityBarColor = getNetworkQualityBarColor(txQuality);
       });
-      //   print("=== UP LINK " +
-      //       txQuality.toString() +
-      //       " Down Link " +
-      //       rxQuality.toString() +
-      //       "      =====");
-      //   print("============================");
     };
     AgoraRtcEngine.onFirstRemoteVideoFrame = (
       int uid,
@@ -334,56 +316,52 @@ class VideoCallScreenState extends State<VideoCallScreen> {
   }
 
   void onCallEnd(BuildContext context) async {
-    endCallFromBtn = true;
-    if (!endCallFromMsg) {
-      //isMRJoinedCall = true; // Always Comment This
-      if (meetingTimer != null) {
-        if (meetingTimer.isActive) {
-          meetingTimer.cancel();
-        }
+    if (meetingTimer != null) {
+      if (meetingTimer.isActive) {
+        meetingTimer.cancel();
       }
+    }
 
-      if (isSomeOneJoinedCall) {
-        Future.delayed(Duration(milliseconds: 300), () {
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => HomePage()));
-        });
-      } else {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10.0))),
-            title: Text("Note"),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                    "No one has not joined this call yet,\nDo You want to close this room?"),
-              ],
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("Yes"),
-                onPressed: () {
-                  Navigator.pop(context); // Close dialog
-
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => HomePage()));
-                },
-              ),
-              FlatButton(
-                child: Text("No"),
-                onPressed: () {
-                  Navigator.pop(context); // Close dialog
-                },
-              ),
+    if (isSomeOneJoinedCall) {
+      Future.delayed(Duration(milliseconds: 300), () {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => HomePage()));
+      });
+    } else {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          title: Text("Note"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                  "No one has not joined this call yet,\nDo You want to close this room?"),
             ],
           ),
-        );
-      }
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Yes"),
+              onPressed: () {
+                Navigator.pop(context); // Close dialog
+
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => HomePage()));
+              },
+            ),
+            FlatButton(
+              child: Text("No"),
+              onPressed: () {
+                Navigator.pop(context); // Close dialog
+              },
+            ),
+          ],
+        ),
+      );
     }
   }
 
@@ -568,30 +546,6 @@ class VideoCallScreenState extends State<VideoCallScreen> {
     return 0;
   }
 
-  String getNetworkQualityString(int txQuality) {
-    switch (txQuality) {
-      case 0:
-        return "Good Network";
-        break;
-      case 1:
-        return "Excellent Network";
-        break;
-      case 2:
-        return "Good Network";
-        break;
-      case 3:
-        return "Poor Network";
-        break;
-      case 4:
-        return "Bad Network";
-        break;
-      case 4:
-        return "No Network";
-        break;
-    }
-    return "Good";
-  }
-
   Color getNetworkQualityBarColor(int txQuality) {
     switch (txQuality) {
       case 0:
@@ -613,6 +567,6 @@ class VideoCallScreenState extends State<VideoCallScreen> {
         return Colors.red;
         break;
     }
-    return Colors.green;
+    return Colors.yellow;
   }
 }

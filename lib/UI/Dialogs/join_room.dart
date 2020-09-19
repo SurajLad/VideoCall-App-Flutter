@@ -49,8 +49,12 @@ class _JoinRoomDialogState extends State<JoinRoomDialog> {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
             color: const Color(0xFF1A1E78),
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => VideoCallScreen(channelName: "12345",)));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => VideoCallScreen(
+                            channelName: "demo",
+                          )));
             },
             child: Row(
               mainAxisSize: MainAxisSize.min,

@@ -70,7 +70,7 @@ class _CreateRoomDialogState extends State<CreateRoomDialog> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => VideoCallScreen(
-                                  channelName: "12345",
+                                  channelName: "demo",
                                 )));
                   }
                 },

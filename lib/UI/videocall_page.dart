@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:chat_app/Controllers/OperationController.dart';
 import 'package:chat_app/UI/home_page.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:get/get.dart';
@@ -21,8 +22,6 @@ class VideoCallScreenState extends State<VideoCallScreen> {
   static final _users = <int>[];
   final _infoStrings = <String>[];
 
-  bool muted = false;
-  bool muteVideo = false;
   bool backCamera = false;
   bool isMeetingPaused = false;
 
@@ -30,6 +29,8 @@ class VideoCallScreenState extends State<VideoCallScreen> {
 
   // UserJoined Bool
   bool isSomeOneJoinedCall = false;
+  final OperationController operationController =
+      Get.put(OperationController());
 
   // Meeeting Timer Helper
   Timer meetingTimer;
@@ -142,13 +143,15 @@ class VideoCallScreenState extends State<VideoCallScreen> {
   /// Add agora event handlers
   void _addAgoraEventHandlers() {
     AgoraRtcEngine.onError = (dynamic code) {
+      print("======== AGORA ERROR  : ======= " + code.toString());
+
       setState(() {
         final info = 'onError: $code';
         _infoStrings.add(info);
       });
     };
     AgoraRtcEngine.onUserOffline = (int uid, int reason) {
-      print("======== AGORA MR OFFLINE : ======= " + reason.toString());
+      print("======== AGORA User OFFLINE : ======= " + reason.toString());
       if (reason == 1) {
         // USER DROPPED by Force Close Or Network Crash
       }
@@ -208,19 +211,17 @@ class VideoCallScreenState extends State<VideoCallScreen> {
       print("============================");
     };
     AgoraRtcEngine.onNetworkQuality = (int uid, int txQuality, int rxQuality) {
-      print("=========NETWORK QUALITY=======");
-
       setState(() {
         networkQuality = getNetworkQuality(txQuality);
         // networkQualityStr = getNetworkQualityString(txQuality);
         networkQualityBarColor = getNetworkQualityBarColor(txQuality);
       });
-      print("=== UP LINK " +
-          txQuality.toString() +
-          " Down Link " +
-          rxQuality.toString() +
-          "      =====");
-      print("============================");
+      //   print("=== UP LINK " +
+      //       txQuality.toString() +
+      //       " Down Link " +
+      //       rxQuality.toString() +
+      //       "      =====");
+      //   print("============================");
     };
     AgoraRtcEngine.onFirstRemoteVideoFrame = (
       int uid,
@@ -264,20 +265,11 @@ class VideoCallScreenState extends State<VideoCallScreen> {
     );
   }
 
-  Widget getViewForScreenContent() {
+  Widget buildJoinUserUI() {
     final views = _getRenderViews();
-    switch (views.length) {
-      case 1:
-        return _expandedVideoRow([views[0]]);
-
-      case 2:
-        return _expandedVideoRow([views[1]]);
-    }
-    return Container();
-  }
-
-  Widget _viewRows() {
-    final views = _getRenderViews();
+    print("=================================");
+    print("           Length " + views.length.toString());
+    print("=================================");
 
     switch (views.length) {
       case 1:
@@ -291,38 +283,11 @@ class VideoCallScreenState extends State<VideoCallScreen> {
             height: screenHeight,
             child: new Stack(
               children: <Widget>[
-                Visibility(
-                  //    visible: !isFaceRecognitionInProgress,
-                  child: Stack(
-                    alignment: Alignment.topLeft,
-                    children: [
-                      Stack(
-                        children: [
-                          Opacity(
-                            opacity: isMeetingPaused ? 0.8 : 1,
-                            child: Column(
-                              children: <Widget>[
-                                _expandedVideoRow([views[1]]),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(top: 60),
-                        child: RawMaterialButton(
-                          onPressed: () => null,
-                          child: Icon(
-                            Icons.mic_off,
-                            color: Colors.white,
-                            size: 16,
-                          ),
-                          shape: CircleBorder(),
-                          elevation: 2.0,
-                          fillColor: Color(0xFF696DED),
-                          padding: const EdgeInsets.all(8.0),
-                        ),
-                      )
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Column(
+                    children: <Widget>[
+                      _expandedVideoRow([views[1]]),
                     ],
                   ),
                 ),
@@ -330,9 +295,13 @@ class VideoCallScreenState extends State<VideoCallScreen> {
                     alignment: Alignment.topRight,
                     child: Container(
                         decoration: BoxDecoration(
-                          border: Border.all(width: 2),
+                          border: Border.all(
+                            width: 8,
+                            color: Colors.white38,
+                          ),
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        margin: const EdgeInsets.fromLTRB(15, 40, 15, 15),
+                        margin: const EdgeInsets.fromLTRB(15, 40, 10, 15),
                         width: 110,
                         height: 140,
                         child: Column(
@@ -418,20 +387,6 @@ class VideoCallScreenState extends State<VideoCallScreen> {
     }
   }
 
-  void _onToggleMute() {
-    setState(() {
-      muted = !muted;
-    });
-    AgoraRtcEngine.muteLocalAudioStream(muted);
-  }
-
-  void _onToggleMuteVideo() {
-    setState(() {
-      muteVideo = !muteVideo;
-    });
-    AgoraRtcEngine.muteLocalVideoStream(muteVideo);
-  }
-
   void _onSwitchCamera() {
     setState(() {
       backCamera = !backCamera;
@@ -450,19 +405,20 @@ class VideoCallScreenState extends State<VideoCallScreen> {
       },
       child: Scaffold(
         body: buildNormalVideoUI(),
-        bottomNavigationBar: GetBuilder(builder: (_) {
+        bottomNavigationBar: GetBuilder<OperationController>(builder: (_) {
           return ConvexAppBar(
             style: TabStyle.fixedCircle,
             backgroundColor: const Color(0xFF1A1E78),
+            color: Colors.white,
             items: [
               TabItem(
-                icon: muted ? Icons.mic_off_outlined : Icons.mic_outlined,
+                icon: _.muted ? Icons.mic_off_outlined : Icons.mic_outlined,
               ),
               TabItem(
                 icon: Icons.call_end_rounded,
               ),
               TabItem(
-                icon: muteVideo
+                icon: _.muteVideo
                     ? Icons.videocam_off_outlined
                     : Icons.videocam_outlined,
               ),
@@ -471,13 +427,13 @@ class VideoCallScreenState extends State<VideoCallScreen> {
             onTap: (int i) {
               switch (i) {
                 case 0:
-                  _onToggleMute();
+                  _.onToggleMuteAudio();
                   break;
                 case 1:
                   onCallEnd(context);
                   break;
                 case 2:
-                  _onToggleMuteVideo();
+                  _.onToggleMuteVideo();
                   break;
               }
             },
@@ -487,13 +443,34 @@ class VideoCallScreenState extends State<VideoCallScreen> {
     );
   }
 
-  Container buildNormalVideoUI() {
+  Widget buildNormalVideoUI() {
     return Container(
       height: screenHeight,
       child: Stack(
         children: <Widget>[
-          _viewRows(),
-          //   < --------     TIMER BUTTON        ------>
+          buildJoinUserUI(),
+          Align(
+            alignment: Alignment.topLeft,
+            child: Container(
+              margin: const EdgeInsets.only(left: 10, top: 30),
+              child: FlatButton(
+                minWidth: 40,
+                height: 50,
+                onPressed: () {
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => HomePage()));
+                },
+                child: Icon(
+                  Icons.arrow_back_outlined,
+                  color: Colors.white,
+                  size: 24.0,
+                ),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6)),
+                color: Colors.white38,
+              ),
+            ),
+          ),
           Align(
             alignment: Alignment.bottomLeft,
             child: Container(

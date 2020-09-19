@@ -1,0 +1,19 @@
+
+Instant Chat App / Video Call App.
+
+Core Feature : 
+- No SignUp Needed
+- No Group Creation and Addition Like way
+- Operates Like GoogleMeet/Zoom Meeting
+
+Basic Idea : 
+- Home page : Creat new Video Or Chat Agora Channel.
+-- On That Channel Other users Can Simply Join And Have Chat
+-- No SignUp But Basic info like Name + Location needed.
+
+FUnctionality/Pages :
+Home --> Create or Join Channel 
+    --> Recent Room Created/Joined.
+
+Chat UI --> Showing Chat UI as per AgoraRTM
+Video CallUI --> Showing Video UI 4 Peoples max.

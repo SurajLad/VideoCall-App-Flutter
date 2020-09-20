@@ -1,16 +1,25 @@
-# chat_app
+# Video-Chat App-Flutter
 
-A new Flutter project.
+Video Calling App Made in Flutter with Agora.io
+ 
+#### Supported features:
+- 1-1 Video Call
+- Group Video Call (4 max)
 
-## Getting Started
+#### Getting Started:
 
-This project is a starting point for a Flutter application.
+1. Clone/Download The Repo 
+2. Signup/Login at https://console.agora.io/signin And get Agora App id;
+3. replace Appid At lib/Helpers/utils.dart
+4. run ```flutter run ```
 
-A few resources to get you started if this is your first Flutter project:
+#### Screenshots:
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+<img src="Screenshots/homepage.jpg" width="300" height="600">
+<img src="Screenshots/create_room.jpg" width="300" height="600">
+<img src="Screenshots/join_room.jpg" width="300" height="600">
+<img src="Screenshots/VideoCall_Ui.jpg" width="300" height="600">
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+#### Graphics Credits:
+- FlatIcons
+- FreePik

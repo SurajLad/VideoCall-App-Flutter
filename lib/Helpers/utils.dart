@@ -4,7 +4,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_share/flutter_share.dart';
 
 String getAgoraAppId() {
-  return "ef0a2920a8414c648d0e92f553b9fd63"; // Return Your Agora App Id
+  return "<YOUR APP ID HERE>"; // Return Your Agora App Id
 }
 
 checkNoSignleDigit(int no) {
@@ -25,7 +25,8 @@ String generateRandomString(int len) {
 void shareToApps(String roomId) async {
   await FlutterShare.share(
     title: 'Video Call Invite',
-    text: 'Hey There, Lets Connect via Video call in App using code : ' + roomId,
+    text:
+        'Hey There, Lets Connect via Video call in App using code : ' + roomId,
   );
 }
 

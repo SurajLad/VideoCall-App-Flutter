@@ -1,17 +1,16 @@
 import 'dart:async';
-import 'dart:math';
-import 'package:chat_app/Controllers/OperationController.dart';
+import 'package:chat_app/Controllers/operation_controller.dart';
 import 'package:chat_app/UI/home_page.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:get/get.dart';
-import 'package:chat_app/Helpers/utls.dart';
+import 'package:chat_app/Helpers/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:signal_strength_indicator/signal_strength_indicator.dart';
 
 class VideoCallScreen extends StatefulWidget {
-  String channelName;
+  final String channelName;
 
   VideoCallScreen({this.channelName});
   @override

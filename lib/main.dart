@@ -1,4 +1,4 @@
-import 'package:chat_app/UI/home_page.dart';
+import 'package:chat_app/ui/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

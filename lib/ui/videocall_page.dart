@@ -1,10 +1,9 @@
 import 'dart:async';
-import 'dart:math';
-import 'package:chat_app/Controllers/OperationController.dart';
-import 'package:chat_app/UI/home_page.dart';
+import 'package:chat_app/controllers/operation_controller.dart';
+import 'package:chat_app/ui/home_page.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:get/get.dart';
-import 'package:chat_app/Helpers/utls.dart';
+import 'package:chat_app/helpers/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';

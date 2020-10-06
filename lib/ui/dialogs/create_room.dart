@@ -1,6 +1,6 @@
-import 'package:chat_app/Helpers/text_styles.dart';
-import 'package:chat_app/Helpers/utls.dart';
-import 'package:chat_app/UI/videocall_page.dart';
+import 'package:chat_app/helpers/text_styles.dart';
+import 'package:chat_app/helpers/utils.dart';
+import 'package:chat_app/ui/videocall_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

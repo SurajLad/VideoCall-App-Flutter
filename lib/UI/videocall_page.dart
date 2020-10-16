@@ -1,17 +1,16 @@
 import 'dart:async';
-import 'dart:math';
-import 'package:chat_app/Controllers/OperationController.dart';
+import 'package:chat_app/Controllers/agora_controller.dart';
+import 'package:chat_app/Helpers/utils.dart';
 import 'package:chat_app/UI/home_page.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:get/get.dart';
-import 'package:chat_app/Helpers/utls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:signal_strength_indicator/signal_strength_indicator.dart';
 
 class VideoCallScreen extends StatefulWidget {
-  String channelName;
+  final String channelName;
 
   VideoCallScreen({this.channelName});
   @override
@@ -22,52 +21,12 @@ class VideoCallScreenState extends State<VideoCallScreen> {
   static final _users = <int>[];
   final _infoStrings = <String>[];
 
-  bool backCamera = false;
-
-  double screenWidth, screenHeight;
-
   // UserJoined Bool
   bool isSomeOneJoinedCall = false;
-  final OperationController operationController =
-      Get.put(OperationController());
-
-  // Meeeting Timer Helper
-  Timer meetingTimer;
-
-  int timerStart = 0;
-  String timerTxt = "00:00";
+  final AgoraController agoraController = Get.put(AgoraController());
 
   int networkQuality = 3;
   Color networkQualityBarColor = Colors.green;
-
-  void startMeetingTimer() async {
-    const oneSec = const Duration(seconds: 1);
-
-    meetingTimer = Timer.periodic(
-      oneSec,
-      (Timer timer) => setState(
-        () {
-          int min = (timerStart / 60).toInt();
-          int sec = (timerStart % 60).toInt();
-
-          timerTxt = min.toString() + ":" + sec.toString() + "";
-
-          if (checkNoSignleDigit(min)) {
-            timerTxt = "0" + min.toString() + ":" + sec.toString() + "";
-          }
-          if (checkNoSignleDigit(sec)) {
-            if (checkNoSignleDigit(min)) {
-              timerTxt = "0" + min.toString() + ":0" + sec.toString() + "";
-            } else {
-              timerTxt = min.toString() + ":0" + sec.toString() + "";
-            }
-          }
-
-          timerStart = timerStart + 1;
-        },
-      ),
-    );
-  }
 
   @override
   void setState(fn) {
@@ -78,30 +37,19 @@ class VideoCallScreenState extends State<VideoCallScreen> {
 
   @override
   void dispose() {
-    print("\n============ ON DISPOSE CALLED ===============\n");
+    print("\n============ ON DISPOSE ===============\n");
     super.dispose();
 
-    if (meetingTimer != null) {
-      meetingTimer.cancel();
+    if (agoraController.meetingTimer != null) {
+      agoraController.meetingTimer.cancel();
     }
 
     // clear users
     _users.clear();
-    // destroy sdk
+
+    // destroy Agora sdk
     AgoraRtcEngine.leaveChannel();
     AgoraRtcEngine.destroy();
-  }
-
-  void onPaused() async {
-    meetingTimer.cancel();
-    await AgoraRtcEngine.disableVideo();
-    await AgoraRtcEngine.disableAudio();
-  }
-
-  void onResumed() async {
-    startMeetingTimer();
-    await AgoraRtcEngine.enableAudio();
-    await AgoraRtcEngine.enableVideo();
   }
 
   @override
@@ -136,15 +84,12 @@ class VideoCallScreenState extends State<VideoCallScreen> {
   void _addAgoraEventHandlers() {
     AgoraRtcEngine.onError = (dynamic code) {
       print("======== AGORA ERROR  : ======= " + code.toString());
-
       setState(() {
         final info = 'onError: $code';
         _infoStrings.add(info);
       });
     };
     AgoraRtcEngine.onUserOffline = (int uid, int reason) {
-      print("======== AGORA User OFFLINE : ======= " + reason.toString());
-
       setState(() {
         final info = 'userOffline: $uid';
         _infoStrings.add(info);
@@ -152,14 +97,8 @@ class VideoCallScreenState extends State<VideoCallScreen> {
       });
     };
 
-    AgoraRtcEngine.onJoinChannelSuccess = (
-      String channel,
-      int uid,
-      int elapsed,
-    ) {
-      print("======================================");
-      print("        ON JOIN CHANNEL SUCESS        ");
-      print("======================================");
+    AgoraRtcEngine.onJoinChannelSuccess =
+        (String channel, int uid, int elapsed) {
       setState(() {
         final info = 'onJoinChannel: $channel, uid: $uid';
         _infoStrings.add(info);
@@ -177,27 +116,21 @@ class VideoCallScreenState extends State<VideoCallScreen> {
       print("======================================");
       print("             User Joined              ");
       print("======================================");
-
-      if (meetingTimer != null) {
-        if (!meetingTimer.isActive) {
-          startMeetingTimer();
+      if (agoraController.meetingTimer != null) {
+        if (!agoraController.meetingTimer.isActive) {
+          agoraController.startMeetingTimer();
         }
       } else {
-        startMeetingTimer();
+        agoraController.startMeetingTimer();
       }
 
       isSomeOneJoinedCall = true;
 
-      setState(() async {
+      setState(() {
         final info = 'userJoined: $uid';
         _infoStrings.add(info);
         _users.add(uid);
       });
-    };
-    AgoraRtcEngine.onNetworkTypeChanged = (int type) {
-      print("=========NETWORK TYPE=======");
-      print("=======     " + type.toString() + "   =====");
-      print("============================");
     };
     AgoraRtcEngine.onNetworkQuality = (int uid, int txQuality, int rxQuality) {
       setState(() {
@@ -205,30 +138,19 @@ class VideoCallScreenState extends State<VideoCallScreen> {
         networkQualityBarColor = getNetworkQualityBarColor(txQuality);
       });
     };
-    AgoraRtcEngine.onFirstRemoteVideoFrame = (
-      int uid,
-      int width,
-      int height,
-      int elapsed,
-    ) {
+    AgoraRtcEngine.onFirstRemoteVideoFrame =
+        (int uid, int width, int height, int elapsed) {
       setState(() {
         final info = 'firstRemoteVideo: $uid ${width}x $height';
         _infoStrings.add(info);
       });
     };
-
-    AgoraRtcEngine.onUserMuteAudio = (int uid, bool muted) {
-      print(" USER MIC MUTE ");
-    };
+    AgoraRtcEngine.onUserMuteAudio = (int uid, bool muted) {};
   }
 
   List<Widget> _getRenderViews() {
     final List<AgoraRenderWidget> list = [
-      AgoraRenderWidget(
-        0,
-        local: true,
-        preview: true,
-      ),
+      AgoraRenderWidget(0, local: true, preview: true),
     ];
     _users.forEach((int uid) => list.add(AgoraRenderWidget(uid)));
     return list;
@@ -249,9 +171,6 @@ class VideoCallScreenState extends State<VideoCallScreen> {
 
   Widget buildJoinUserUI() {
     final views = _getRenderViews();
-    print("=================================");
-    print("           Length " + views.length.toString());
-    print("=================================");
 
     switch (views.length) {
       case 1:
@@ -261,8 +180,8 @@ class VideoCallScreenState extends State<VideoCallScreen> {
         ));
       case 2:
         return new Container(
-            width: screenWidth,
-            height: screenHeight,
+            width: Get.width,
+            height: Get.height,
             child: new Stack(
               children: <Widget>[
                 Align(
@@ -316,9 +235,9 @@ class VideoCallScreenState extends State<VideoCallScreen> {
   }
 
   void onCallEnd(BuildContext context) async {
-    if (meetingTimer != null) {
-      if (meetingTimer.isActive) {
-        meetingTimer.cancel();
+    if (agoraController.meetingTimer != null) {
+      if (agoraController.meetingTimer.isActive) {
+        agoraController.meetingTimer.cancel();
       }
     }
 
@@ -348,7 +267,6 @@ class VideoCallScreenState extends State<VideoCallScreen> {
               child: Text("Yes"),
               onPressed: () {
                 Navigator.pop(context); // Close dialog
-
                 Navigator.pushReplacement(context,
                     MaterialPageRoute(builder: (context) => HomePage()));
               },
@@ -365,25 +283,15 @@ class VideoCallScreenState extends State<VideoCallScreen> {
     }
   }
 
-  void _onSwitchCamera() {
-    setState(() {
-      backCamera = !backCamera;
-    });
-    AgoraRtcEngine.switchCamera();
-  }
-
   @override
   Widget build(BuildContext context) {
-    screenWidth = MediaQuery.of(context).size.width;
-    screenHeight = MediaQuery.of(context).size.height;
-
     return WillPopScope(
       onWillPop: () {
         return;
       },
       child: Scaffold(
         body: buildNormalVideoUI(),
-        bottomNavigationBar: GetBuilder<OperationController>(builder: (_) {
+        bottomNavigationBar: GetBuilder<AgoraController>(builder: (_) {
           return ConvexAppBar(
             style: TabStyle.fixedCircle,
             backgroundColor: const Color(0xFF1A1E78),
@@ -423,7 +331,7 @@ class VideoCallScreenState extends State<VideoCallScreen> {
 
   Widget buildNormalVideoUI() {
     return Container(
-      height: screenHeight,
+      height: Get.height,
       child: Stack(
         children: <Widget>[
           buildJoinUserUI(),
@@ -474,42 +382,45 @@ class VideoCallScreenState extends State<VideoCallScreen> {
                   const SizedBox(
                     width: 8,
                   ),
-                  Text(
-                    timerTxt,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                      shadows: <Shadow>[
-                        Shadow(
-                          offset: Offset(0.0, 2.0),
-                          blurRadius: 2.0,
-                          color: Color.fromARGB(255, 0, 0, 0),
-                        ),
-                      ],
-                    ),
-                  ),
+                  Obx(() {
+                    return Text(
+                      agoraController.meetingDurationTxt.value,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                        shadows: <Shadow>[
+                          Shadow(
+                            offset: Offset(1.0, 2.0),
+                            blurRadius: 2.0,
+                            color: Color.fromARGB(255, 0, 0, 0),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
                 ],
               ),
             ),
           ),
           Align(
-            alignment: Alignment.bottomRight,
-            child: Container(
-              margin: const EdgeInsets.only(right: 10, bottom: 4),
-              child: RawMaterialButton(
-                onPressed: _onSwitchCamera,
-                child: Icon(
-                  backCamera ? Icons.camera_rear : Icons.camera_front,
-                  color: Colors.white,
-                  size: 24.0,
-                ),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6)),
-                fillColor: Colors.white38,
-              ),
-            ),
-          ),
+              alignment: Alignment.bottomRight,
+              child: GetBuilder<AgoraController>(builder: (_) {
+                return Container(
+                  margin: const EdgeInsets.only(right: 10, bottom: 4),
+                  child: RawMaterialButton(
+                    onPressed: _.onSwitchCamera,
+                    child: Icon(
+                      _.backCamera ? Icons.camera_rear : Icons.camera_front,
+                      color: Colors.white,
+                      size: 24.0,
+                    ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6)),
+                    fillColor: Colors.white38,
+                  ),
+                );
+              })),
         ],
       ),
     );

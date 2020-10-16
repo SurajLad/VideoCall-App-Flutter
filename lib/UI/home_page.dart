@@ -159,7 +159,7 @@ class HomePage extends StatelessWidget {
         backgroundColor: const Color(0xFF1A1E78),
         child: Icon(Icons.thumb_up_alt_outlined),
         onPressed: () {
-          Get.snackbar("Liked ?", "Please ★ My Project On Git :) ",
+          Get.snackbar("You Liked ?", "Please ★ My Project On Git :) ",
               backgroundColor: Colors.white,
               colorText: Color(0xFF1A1E78),
               snackPosition: SnackPosition.BOTTOM);

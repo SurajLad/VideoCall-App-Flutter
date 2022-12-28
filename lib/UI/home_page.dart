@@ -54,23 +54,25 @@ class HomePage extends StatelessWidget {
                     flex: 4,
                     child: Padding(
                       padding: const EdgeInsets.only(left: 10, right: 10),
-                      child: FlatButton(
+                      child: TextButton(
                         onPressed: () {
                           showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (_) {
-                                return CreateRoomDialog();
-                              });
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (_) {
+                              return CreateRoomDialog();
+                            },
+                          );
                         },
                         child: Row(
                           children: [
                             Flexible(
-                                flex: 7,
-                                child: Image.asset(
-                                  "Assets/create_meeting_vector.png",
-                                  fit: BoxFit.fill,
-                                )),
+                              flex: 7,
+                              child: Image.asset(
+                                "Assets/create_meeting_vector.png",
+                                fit: BoxFit.fill,
+                              ),
+                            ),
                             Flexible(
                               flex: 4,
                               child: Column(
@@ -107,7 +109,7 @@ class HomePage extends StatelessWidget {
                     flex: 4,
                     child: Padding(
                       padding: const EdgeInsets.only(left: 10, right: 10),
-                      child: FlatButton(
+                      child: TextButton(
                         onPressed: () {
                           showDialog(
                               context: context,

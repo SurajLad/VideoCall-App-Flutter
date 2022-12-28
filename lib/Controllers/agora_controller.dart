@@ -5,6 +5,8 @@ import 'package:chat_app/Helpers/utils.dart';
 import 'package:get/get.dart';
 
 class AgoraController extends GetxController {
+  RtcEngine engine;
+
   // Meeeting Timer Helper
   Timer meetingTimer;
   int meetingDuration = 0;
@@ -15,19 +17,25 @@ class AgoraController extends GetxController {
   bool muteVideo = false;
   bool backCamera = false;
 
+  @override
+  void onInit() {
+    engine = createAgoraRtcEngine();
+    super.onInit();
+  }
+
   void onToggleMuteAudio() {
     muted = !muted;
-    AgoraRtcEngine.muteLocalAudioStream(muted);
+    engine.muteLocalAudioStream(muted);
   }
 
   void onToggleMuteVideo() {
     muteVideo = !muteVideo;
-    AgoraRtcEngine.muteLocalVideoStream(muteVideo);
+    engine.muteLocalVideoStream(muteVideo);
   }
 
   void onSwitchCamera() {
     backCamera = !backCamera;
-    AgoraRtcEngine.switchCamera();
+    engine.switchCamera();
   }
 
   void startMeetingTimer() async {

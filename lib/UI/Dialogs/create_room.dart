@@ -38,31 +38,28 @@ class _CreateRoomDialogState extends State<CreateRoomDialog> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              FlatButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6)),
-                color: const Color(0xFF1A1E78),
+              ElevatedButton.icon(
+                icon: Icon(Icons.share, color: Colors.white),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6)),
+                  backgroundColor: const Color(0xFF1A1E78),
+                ),
                 onPressed: () {
                   shareToApps(roomId);
                 },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.share, color: Colors.white),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Text(
-                      "Share",
-                      style: regularTxtStyle,
-                    ),
-                  ],
+                label: Text(
+                  "Share",
+                  style: regularTxtStyle,
                 ),
               ),
-              FlatButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6)),
-                color: const Color(0xFF1A1E78),
+              ElevatedButton.icon(
+                icon: Icon(Icons.arrow_forward, color: Colors.white),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6)),
+                  backgroundColor: const Color(0xFF1A1E78),
+                ),
                 onPressed: () async {
                   bool isPermissionGranted =
                       await handlePermissionsForCall(context);
@@ -81,18 +78,9 @@ class _CreateRoomDialogState extends State<CreateRoomDialog> {
                         snackPosition: SnackPosition.BOTTOM);
                   }
                 },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.arrow_forward, color: Colors.white),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Text(
-                      "Join",
-                      style: regularTxtStyle,
-                    ),
-                  ],
+                label: Text(
+                  "Join",
+                  style: regularTxtStyle,
                 ),
               ),
             ],

@@ -81,18 +81,20 @@ void showCustomDialog(BuildContext context, String title, String message,
       return AlertDialog(
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(10.0))),
-        title: new Text(
+        title: Text(
           title,
           style: TextStyle(fontFamily: 'WorkSansMedium'),
         ),
-        content: new Text(
+        content: Text(
           message,
           style: TextStyle(fontFamily: 'WorkSansMedium'),
         ),
         actions: <Widget>[
-          new FlatButton(
-            child:
-                new Text("OK", style: TextStyle(fontFamily: 'WorkSansMedium')),
+          TextButton(
+            child: Text(
+              "OK",
+              style: TextStyle(fontFamily: 'WorkSansMedium'),
+            ),
             onPressed: okPressed,
           ),
         ],

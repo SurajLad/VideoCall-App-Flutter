@@ -37,10 +37,13 @@ class JoinRoomDialog extends StatelessWidget {
           const SizedBox(
             height: 20,
           ),
-          FlatButton(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-            color: const Color(0xFF1A1E78),
+          ElevatedButton.icon(
+            icon: Icon(Icons.arrow_forward, color: Colors.white),
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6)),
+              backgroundColor: const Color(0xFF1A1E78),
+            ),
             onPressed: () async {
               if (roomTxtController.text.isNotEmpty) {
                 bool isPermissionGranted =
@@ -66,18 +69,9 @@ class JoinRoomDialog extends StatelessWidget {
                     snackPosition: SnackPosition.BOTTOM);
               }
             },
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.arrow_forward, color: Colors.white),
-                const SizedBox(
-                  width: 20,
-                ),
-                Text(
-                  "Join Room",
-                  style: regularTxtStyle,
-                ),
-              ],
+            label: Text(
+              "Join Room",
+              style: regularTxtStyle,
             ),
           ),
         ],

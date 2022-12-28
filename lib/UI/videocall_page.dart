@@ -5,7 +5,6 @@ import 'package:chat_app/UI/home_page.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:signal_strength_indicator/signal_strength_indicator.dart';
 
@@ -23,7 +22,7 @@ class VideoCallScreenState extends State<VideoCallScreen> {
 
   // UserJoined Bool
   bool isSomeOneJoinedCall = false;
-  final AgoraController agoraController = Get.put(AgoraController());
+  final agoraController = Get.put(AgoraController());
 
   int networkQuality = 3;
   Color networkQualityBarColor = Colors.green;
@@ -36,7 +35,7 @@ class VideoCallScreenState extends State<VideoCallScreen> {
   }
 
   @override
-  void dispose() {
+  void dispose() async {
     print("\n============ ON DISPOSE ===============\n");
     super.dispose();
 
@@ -48,8 +47,8 @@ class VideoCallScreenState extends State<VideoCallScreen> {
     _users.clear();
 
     // destroy Agora sdk
-    AgoraRtcEngine.leaveChannel();
-    AgoraRtcEngine.destroy();
+    await agoraController.engine.leaveChannel();
+    await agoraController.engine.release();
   }
 
   @override
@@ -68,16 +67,23 @@ class VideoCallScreenState extends State<VideoCallScreen> {
 
     await _initAgoraRtcEngine();
     _addAgoraEventHandlers();
-    await AgoraRtcEngine.enableWebSdkInteroperability(true);
+    await agoraController.engine.enableWebSdkInteroperability(true);
 
-    await AgoraRtcEngine.setParameters(
+    await agoraController.engine.setParameters(
         '''{\"che.video.lowBitRateStreamParameter\":{\"width\":640,\"height\":360,\"frameRate\":30,\"bitRate\":800}}''');
-    await AgoraRtcEngine.joinChannel(null, widget.channelName, null, 0);
+    await agoraController.engine.joinChannel(
+      token: 's',
+      channelId: widget.channelName,
+      uid: 0,
+      options: ChannelMediaOptions(),
+    );
+
+    // await agoraController.engine.joinChannel(null, widget.channelName, null, 0);
   }
 
   Future<void> _initAgoraRtcEngine() async {
-    await AgoraRtcEngine.create(getAgoraAppId());
-    await AgoraRtcEngine.enableVideo();
+    await agoraController.engine.create(getAgoraAppId());
+    await agoraController.engine.enableVideo();
   }
 
   /// agora event handlers
@@ -263,7 +269,7 @@ class VideoCallScreenState extends State<VideoCallScreen> {
             ],
           ),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               child: Text("Yes"),
               onPressed: () {
                 Navigator.pop(context); // Close dialog
@@ -271,7 +277,7 @@ class VideoCallScreenState extends State<VideoCallScreen> {
                     MaterialPageRoute(builder: (context) => HomePage()));
               },
             ),
-            FlatButton(
+            TextButton(
               child: Text("No"),
               onPressed: () {
                 Navigator.pop(context); // Close dialog
@@ -339,9 +345,14 @@ class VideoCallScreenState extends State<VideoCallScreen> {
             alignment: Alignment.topLeft,
             child: Container(
               margin: const EdgeInsets.only(left: 10, top: 30),
-              child: FlatButton(
-                minWidth: 40,
-                height: 50,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6)),
+                  backgroundColor: Colors.white38,
+                  // minWidth: 40,
+                  // height: 50,
+                ),
                 onPressed: () {
                   Navigator.pushReplacement(context,
                       MaterialPageRoute(builder: (context) => HomePage()));
@@ -351,9 +362,6 @@ class VideoCallScreenState extends State<VideoCallScreen> {
                   color: Colors.white,
                   size: 24.0,
                 ),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6)),
-                color: Colors.white38,
               ),
             ),
           ),

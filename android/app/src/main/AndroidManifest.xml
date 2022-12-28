@@ -15,7 +15,6 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     
     <application
-        android:name="io.flutter.app.FlutterApplication"
         android:label="chat_app"
         android:icon="@mipmap/ic_launcher">
         <activity

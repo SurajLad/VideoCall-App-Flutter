@@ -1,8 +1,9 @@
-import 'package:chat_app/Helpers/text_styles.dart';
-import 'package:chat_app/Helpers/utils.dart';
-import 'package:chat_app/UI/videocall_page.dart';
+import 'package:chat_app/components/utils.dart';
+import 'package:chat_app/features/video_call/videocall_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../design_system/text_styles.dart';
 
 class CreateRoomDialog extends StatefulWidget {
   @override

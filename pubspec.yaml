@@ -18,7 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.14.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -28,11 +28,11 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   get: ^4.6.5
-  google_fonts: ^1.1.0
+  google_fonts: 3.0.1
   agora_rtc_engine: ^6.1.0
   permission_handler: ^10.2.0
   share_plus: ^6.3.0
-  flutter_share:
+  # flutter_share:
   signal_strength_indicator: 0.4.1
   convex_bottom_bar: ^3.1.0+1    
 
@@ -55,7 +55,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - Assets/
+    - assets/
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

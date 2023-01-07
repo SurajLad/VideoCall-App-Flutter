@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
-import 'package:chat_app/Helpers/utils.dart';
+import 'package:chat_app/components/utils.dart';
 import 'package:get/get.dart';
 
 class AgoraController extends GetxController {
-  RtcEngine engine;
+  late RtcEngine engine;
 
   // Meeeting Timer Helper
-  Timer meetingTimer;
+  late Timer meetingTimer;
   int meetingDuration = 0;
   var meetingDurationTxt = "00:00".obs;
 

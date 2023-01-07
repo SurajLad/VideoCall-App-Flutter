@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_share/flutter_share.dart';
 
 String getAgoraAppId() {
   return "<YOUR APP ID HERE>"; // Return Your Agora App Id
@@ -23,11 +22,11 @@ String generateRandomString(int len) {
 }
 
 void shareToApps(String roomId) async {
-  await FlutterShare.share(
-    title: 'Video Call Invite',
-    text:
-        'Hey There, Lets Connect via Video call in App using code : ' + roomId,
-  );
+  // await FlutterShare.share(
+  //   title: 'Video Call Invite',
+  //   text:
+  //       'Hey There, Lets Connect via Video call in App using code : ' + roomId,
+  // );
 }
 
 Future<bool> handlePermissionsForCall(BuildContext context) async {
@@ -37,21 +36,21 @@ Future<bool> handlePermissionsForCall(BuildContext context) async {
     Permission.storage,
   ].request();
 
-  if (statuses[Permission.storage].isPermanentlyDenied) {
+  if (statuses[Permission.storage]?.isPermanentlyDenied ?? false) {
     showCustomDialog(context, "Permission Required",
         "Storage Permission Required for Video Call", () {
       Navigator.pop(context);
       openAppSettings();
     });
     return false;
-  } else if (statuses[Permission.camera].isPermanentlyDenied) {
+  } else if (statuses[Permission.camera]?.isPermanentlyDenied ?? false) {
     showCustomDialog(context, "Permission Required",
         "Camera Permission Required for Video Call", () {
       Navigator.pop(context);
       openAppSettings();
     });
     return false;
-  } else if (statuses[Permission.microphone].isPermanentlyDenied) {
+  } else if (statuses[Permission.microphone]?.isPermanentlyDenied ?? false) {
     showCustomDialog(context, "Permission Required",
         "Microphone Permission Required for Video Call", () {
       Navigator.pop(context);
@@ -60,18 +59,22 @@ Future<bool> handlePermissionsForCall(BuildContext context) async {
     return false;
   }
 
-  if (statuses[Permission.storage].isDenied) {
+  if (statuses[Permission.storage]?.isDenied ?? false) {
     return false;
-  } else if (statuses[Permission.camera].isDenied) {
+  } else if (statuses[Permission.camera]?.isDenied ?? false) {
     return false;
-  } else if (statuses[Permission.microphone].isDenied) {
+  } else if (statuses[Permission.microphone]?.isDenied ?? false) {
     return false;
   }
   return true;
 }
 
-void showCustomDialog(BuildContext context, String title, String message,
-    Function okPressed) async {
+void showCustomDialog(
+  BuildContext context,
+  String title,
+  String message,
+  VoidCallback okPressed,
+) async {
   showDialog(
     context: context,
     barrierDismissible: false,

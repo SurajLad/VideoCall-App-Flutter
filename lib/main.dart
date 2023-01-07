@@ -1,4 +1,3 @@
-import 'package:chat_app/UI/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -20,7 +19,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyWidget extends StatelessWidget {
-  const MyWidget({Key key}) : super(key: key);
+  const MyWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

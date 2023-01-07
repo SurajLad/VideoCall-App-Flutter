@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:chat_app/Controllers/agora_controller.dart';
-import 'package:chat_app/Helpers/utils.dart';
-import 'package:chat_app/UI/home_page.dart';
+import 'package:chat_app/features/controller/agora_controller.dart';
+import 'package:chat_app/components/utils.dart';
+import 'package:chat_app/features/home_page.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +11,7 @@ import 'package:signal_strength_indicator/signal_strength_indicator.dart';
 class VideoCallScreen extends StatefulWidget {
   final String channelName;
 
-  VideoCallScreen({this.channelName});
+  VideoCallScreen({required this.channelName});
   @override
   VideoCallScreenState createState() => VideoCallScreenState();
 }
@@ -69,8 +69,9 @@ class VideoCallScreenState extends State<VideoCallScreen> {
     _addAgoraEventHandlers();
     await agoraController.engine.enableWebSdkInteroperability(true);
 
-    await agoraController.engine.setParameters(
-        '''{\"che.video.lowBitRateStreamParameter\":{\"width\":640,\"height\":360,\"frameRate\":30,\"bitRate\":800}}''');
+    // await agoraController.engine.setParameters(
+    //   '''{\"che.video.lowBitRateStreamParameter\":{\"width\":640,\"height\":360,\"frameRate\":30,\"bitRate\":800}}''',
+    // );
     await agoraController.engine.joinChannel(
       token: 's',
       channelId: widget.channelName,
@@ -82,88 +83,99 @@ class VideoCallScreenState extends State<VideoCallScreen> {
   }
 
   Future<void> _initAgoraRtcEngine() async {
-    await agoraController.engine.create(getAgoraAppId());
+    await agoraController.engine.initialize(RtcEngineContext(
+      appId: getAgoraAppId(),
+    ));
     await agoraController.engine.enableVideo();
+    await agoraController.engine.setVideoEncoderConfiguration(
+      const VideoEncoderConfiguration(
+        dimensions: VideoDimensions(width: 640, height: 360),
+        frameRate: 30,
+        bitrate: 800,
+      ),
+    );
   }
 
   /// agora event handlers
   void _addAgoraEventHandlers() {
-    AgoraRtcEngine.onError = (dynamic code) {
-      print("======== AGORA ERROR  : ======= " + code.toString());
-      setState(() {
-        final info = 'onError: $code';
-        _infoStrings.add(info);
-      });
-    };
-    AgoraRtcEngine.onUserOffline = (int uid, int reason) {
-      setState(() {
-        final info = 'userOffline: $uid';
-        _infoStrings.add(info);
-        _users.remove(uid);
-      });
-    };
+    agoraController.engine.registerEventHandler(
+      RtcEngineEventHandler(
+        onError: (err, msg) {
+          print("======== AGORA ERROR  : ======= " + err.toString());
+          setState(() {
+            final info = 'onError: $err';
+            _infoStrings.add(info);
+          });
+        },
+        onUserOffline: (connection, remoteUid, reason) {
+          setState(() {
+            final info = 'userOffline: $remoteUid';
+            _infoStrings.add(info);
+            _users.remove(remoteUid);
+          });
+        },
+        onJoinChannelSuccess: (connection, elapsed) {
+          setState(() {
+            final info = 'onJoinChannel: ${connection.channelId}';
+            _infoStrings.add(info);
+          });
+        },
+        onLeaveChannel: (connection, stats) {
+          setState(() {
+            _infoStrings.add('onLeaveChannel');
+            _users.clear();
+          });
+        },
+        onUserJoined: (connection, remoteUid, elapsed) {
+          print("======================================");
+          print("             User Joined              ");
+          print("======================================");
+          if (agoraController.meetingTimer != null) {
+            if (!agoraController.meetingTimer.isActive) {
+              agoraController.startMeetingTimer();
+            }
+          } else {
+            agoraController.startMeetingTimer();
+          }
 
-    AgoraRtcEngine.onJoinChannelSuccess =
-        (String channel, int uid, int elapsed) {
-      setState(() {
-        final info = 'onJoinChannel: $channel, uid: $uid';
-        _infoStrings.add(info);
-      });
-    };
+          isSomeOneJoinedCall = true;
 
-    AgoraRtcEngine.onLeaveChannel = () {
-      setState(() {
-        _infoStrings.add('onLeaveChannel');
-        _users.clear();
-      });
-    };
-
-    AgoraRtcEngine.onUserJoined = (int uid, int elapsed) {
-      print("======================================");
-      print("             User Joined              ");
-      print("======================================");
-      if (agoraController.meetingTimer != null) {
-        if (!agoraController.meetingTimer.isActive) {
-          agoraController.startMeetingTimer();
-        }
-      } else {
-        agoraController.startMeetingTimer();
-      }
-
-      isSomeOneJoinedCall = true;
-
-      setState(() {
-        final info = 'userJoined: $uid';
-        _infoStrings.add(info);
-        _users.add(uid);
-      });
-    };
-    AgoraRtcEngine.onNetworkQuality = (int uid, int txQuality, int rxQuality) {
-      setState(() {
-        networkQuality = getNetworkQuality(txQuality);
-        networkQualityBarColor = getNetworkQualityBarColor(txQuality);
-      });
-    };
-    AgoraRtcEngine.onFirstRemoteVideoFrame =
-        (int uid, int width, int height, int elapsed) {
-      setState(() {
-        final info = 'firstRemoteVideo: $uid ${width}x $height';
-        _infoStrings.add(info);
-      });
-    };
-    AgoraRtcEngine.onUserMuteAudio = (int uid, bool muted) {};
+          setState(() {
+            final info = 'userJoined: $remoteUid';
+            _infoStrings.add(info);
+            _users.add(remoteUid);
+          });
+        },
+        onNetworkQuality: (connection, remoteUid, txQuality, rxQuality) {
+          setState(() {
+            networkQuality = getNetworkQuality(txQuality.index);
+            networkQualityBarColor = getNetworkQualityBarColor(txQuality.index);
+          });
+        },
+        onFirstRemoteVideoFrame:
+            (connection, remoteUid, width, height, elapsed) {
+          setState(() {
+            final info = 'firstRemoteVideo: $remoteUid ${width}x $height';
+            _infoStrings.add(info);
+          });
+        },
+      ),
+    );
   }
 
   List<Widget> _getRenderViews() {
-    final List<AgoraRenderWidget> list = [
-      AgoraRenderWidget(0, local: true, preview: true),
-    ];
-    _users.forEach((int uid) => list.add(AgoraRenderWidget(uid)));
-    return list;
+    return [];
+    // final List<AgoraRenderWidget> list = [
+    //   AgoraRenderWidget(0, local: true, preview: true),
+    // ];
+    // _users.forEach((int uid) => list.add(AgoraRenderWidget(uid)));
+    // return list;
   }
 
   Widget _videoView(view) {
-    return Expanded(child: Container(child: view));
+    return Expanded(
+      child: Container(child: view),
+    );
   }
 
   Widget _expandedVideoRow(List<Widget> views) {
@@ -292,8 +304,8 @@ class VideoCallScreenState extends State<VideoCallScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () {
-        return;
+      onWillPop: () async {
+        return false;
       },
       child: Scaffold(
         body: buildNormalVideoUI(),

@@ -1,7 +1,7 @@
-import 'package:chat_app/UI/Dialogs/create_room.dart';
-import 'package:chat_app/UI/Dialogs/join_room.dart';
+import 'package:chat_app/features/dialogs/create_room.dart';
+import 'package:chat_app/features/dialogs/join_room.dart';
 import 'package:flutter/material.dart';
-import 'package:chat_app/Helpers/text_styles.dart';
+import 'package:chat_app/design_system/text_styles.dart';
 import 'package:get/get.dart';
 
 class HomePage extends StatelessWidget {

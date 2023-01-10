@@ -1,26 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-TextStyle regularTxtStyle = GoogleFonts.lato(
-    textStyle: TextStyle(
-  fontSize: 14,
-  color: Colors.white,
-));
+class AppTextStyles {
+  static const TextStyle regular = TextStyle(
+    fontSize: 14,
+    color: Colors.white,
+    fontFamily: 'Lato',
+  );
 
-TextStyle midTxtStyle = GoogleFonts.lato(
-    textStyle: TextStyle(
-  fontSize: 20,
-  color: Colors.white,
-));
+  static const TextStyle medium = TextStyle(
+    fontSize: 20,
+    color: Colors.white,
+    fontFamily: 'Lato',
+  );
 
-TextStyle largeTxtStyle = GoogleFonts.lato(
-    textStyle: TextStyle(
-  fontSize: 22,
-  color: Colors.white,
-));
+  static const TextStyle large = TextStyle(
+    fontSize: 22,
+    color: Colors.white,
+    fontFamily: 'Lato',
+  );
 
-TextStyle extraLargeTxtStyle = GoogleFonts.lato(
-    textStyle: TextStyle(
-  fontSize: 26,
-  color: Colors.white,
-));
+  static const TextStyle largeXL = TextStyle(
+    fontSize: 26,
+    color: Colors.white,
+    fontFamily: 'Lato',
+  );
+
+  static const TextStyle largeXXL = TextStyle(
+    fontSize: 26,
+    color: Colors.white,
+    fontFamily: 'Lato',
+  );
+}

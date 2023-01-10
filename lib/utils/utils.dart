@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 String getAgoraAppId() {
-  return "<YOUR APP ID HERE>"; // Return Your Agora App Id
+  return 'ef0a2920a8414c648d0e92f553b9fd63';
+  // return "<YOUR APP ID HERE>"; // Return Your Agora App Id
 }
 
-checkNoSignleDigit(int no) {
+bool checkNoSignleDigit(int no) {
   int len = no.toString().length;
   if (len == 1) {
     return true;

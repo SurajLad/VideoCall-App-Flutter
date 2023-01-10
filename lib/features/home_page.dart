@@ -23,12 +23,14 @@ class HomePage extends StatelessWidget {
               children: [
                 Text(
                   "VideoChat App",
-                  style: largeTxtStyle.copyWith(fontWeight: FontWeight.w600),
+                  style:
+                      AppTextStyles.large.copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 10),
                 Text(
                   "Easy connect with friends via video call.",
-                  style: largeTxtStyle.copyWith(fontWeight: FontWeight.w600),
+                  style:
+                      AppTextStyles.large.copyWith(fontWeight: FontWeight.w600),
                 ),
               ],
             ),
@@ -69,7 +71,7 @@ class HomePage extends StatelessWidget {
                             Flexible(
                               flex: 7,
                               child: Image.asset(
-                                "Assets/create_meeting_vector.png",
+                                "assets/create_meeting_vector.png",
                                 fit: BoxFit.fill,
                               ),
                             ),
@@ -81,12 +83,12 @@ class HomePage extends StatelessWidget {
                                 children: [
                                   Text(
                                     "Create Room",
-                                    style: largeTxtStyle.copyWith(
+                                    style: AppTextStyles.large.copyWith(
                                         color: const Color(0xFF1A1E78)),
                                   ),
                                   Text(
                                     "create a unique agora room and ask others to join the same.",
-                                    style: regularTxtStyle.copyWith(
+                                    style: AppTextStyles.regular.copyWith(
                                         color: const Color(0xFF1A1E78)),
                                   ),
                                 ],
@@ -112,18 +114,19 @@ class HomePage extends StatelessWidget {
                       child: TextButton(
                         onPressed: () {
                           showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (_) {
-                                return JoinRoomDialog();
-                              });
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (_) {
+                              return JoinRoomDialog();
+                            },
+                          );
                         },
                         child: Row(
                           children: [
                             Flexible(
                                 flex: 6,
                                 child: Image.asset(
-                                  "Assets/join_meeting_vector.png",
+                                  "assets/join_meeting_vector.png",
                                   fit: BoxFit.fill,
                                 )),
                             Flexible(
@@ -135,12 +138,12 @@ class HomePage extends StatelessWidget {
                                 children: [
                                   Text(
                                     "Join Room",
-                                    style: largeTxtStyle.copyWith(
+                                    style: AppTextStyles.large.copyWith(
                                         color: const Color(0xFF1A1E78)),
                                   ),
                                   Text(
                                     "Join a agora room created by your friend.",
-                                    style: regularTxtStyle.copyWith(
+                                    style: AppTextStyles.regular.copyWith(
                                         color: const Color(0xFF1A1E78)),
                                   ),
                                 ],

@@ -1,5 +1,5 @@
-import 'package:chat_app/components/utils.dart';
-import 'package:chat_app/features/video_call/videocall_page.dart';
+import 'package:chat_app/utils/utils.dart';
+import 'package:chat_app/features/video_call/video_call_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -27,11 +27,12 @@ class _CreateRoomDialogState extends State<CreateRoomDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Image.asset(
-            'Assets/room_created_vector.png',
+            'assets/room_created_vector.png',
           ),
           Text(
             "Room id : " + roomId,
-            style: midTxtStyle.copyWith(color: const Color(0xFF1A1E78)),
+            style:
+                AppTextStyles.medium.copyWith(color: const Color(0xFF1A1E78)),
           ),
           const SizedBox(
             height: 20,
@@ -51,7 +52,7 @@ class _CreateRoomDialogState extends State<CreateRoomDialog> {
                 },
                 label: Text(
                   "Share",
-                  style: regularTxtStyle,
+                  style: AppTextStyles.regular,
                 ),
               ),
               ElevatedButton.icon(
@@ -66,22 +67,26 @@ class _CreateRoomDialogState extends State<CreateRoomDialog> {
                       await handlePermissionsForCall(context);
                   if (isPermissionGranted) {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => VideoCallScreen(
-                                  channelName: roomId,
-                                )));
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VideoCallScreen(
+                          channelName: roomId,
+                        ),
+                      ),
+                    );
                   } else {
-                    Get.snackbar("Failed",
-                        "Microphone Permission Required for Video Call.",
-                        backgroundColor: Colors.white,
-                        colorText: Color(0xFF1A1E78),
-                        snackPosition: SnackPosition.BOTTOM);
+                    Get.snackbar(
+                      "Failed",
+                      "Microphone Permission Required for Video Call.",
+                      backgroundColor: Colors.white,
+                      colorText: Color(0xFF1A1E78),
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
                   }
                 },
                 label: Text(
                   "Join",
-                  style: regularTxtStyle,
+                  style: AppTextStyles.regular,
                 ),
               ),
             ],

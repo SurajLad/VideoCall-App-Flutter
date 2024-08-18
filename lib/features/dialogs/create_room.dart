@@ -67,17 +67,21 @@ class _CreateRoomDialogState extends State<CreateRoomDialog> {
                       await handlePermissionsForCall(context);
                   if (isPermissionGranted) {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => VideoCallScreen(
-                                  channelName: roomId,
-                                )));
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VideoCallScreen(
+                          channelName: roomId,
+                        ),
+                      ),
+                    );
                   } else {
-                    Get.snackbar("Failed",
-                        "Microphone Permission Required for Video Call.",
-                        backgroundColor: Colors.white,
-                        colorText: Color(0xFF1A1E78),
-                        snackPosition: SnackPosition.BOTTOM);
+                    Get.snackbar(
+                      "Failed",
+                      "Microphone Permission Required for Video Call.",
+                      backgroundColor: Colors.white,
+                      colorText: Color(0xFF1A1E78),
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
                   }
                 },
                 label: Text(

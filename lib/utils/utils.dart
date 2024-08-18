@@ -38,25 +38,37 @@ Future<bool> handlePermissionsForCall(BuildContext context) async {
   ].request();
 
   if (statuses[Permission.storage]?.isPermanentlyDenied ?? false) {
-    showCustomDialog(context, "Permission Required",
-        "Storage Permission Required for Video Call", () {
-      Navigator.pop(context);
-      openAppSettings();
-    });
+    showCustomDialog(
+      context,
+      "Permission Required",
+      "Storage Permission Required for Video Call",
+      () {
+        Navigator.pop(context);
+        openAppSettings();
+      },
+    );
     return false;
   } else if (statuses[Permission.camera]?.isPermanentlyDenied ?? false) {
-    showCustomDialog(context, "Permission Required",
-        "Camera Permission Required for Video Call", () {
-      Navigator.pop(context);
-      openAppSettings();
-    });
+    showCustomDialog(
+      context,
+      "Permission Required",
+      "Camera Permission Required for Video Call",
+      () {
+        Navigator.pop(context);
+        openAppSettings();
+      },
+    );
     return false;
   } else if (statuses[Permission.microphone]?.isPermanentlyDenied ?? false) {
-    showCustomDialog(context, "Permission Required",
-        "Microphone Permission Required for Video Call", () {
-      Navigator.pop(context);
-      openAppSettings();
-    });
+    showCustomDialog(
+      context,
+      "Permission Required",
+      "Microphone Permission Required for Video Call",
+      () {
+        Navigator.pop(context);
+        openAppSettings();
+      },
+    );
     return false;
   }
 

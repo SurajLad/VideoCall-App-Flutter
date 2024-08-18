@@ -8,7 +8,7 @@ if (localPropertiesFile.exists()) {
 
 def flutterRoot = localProperties.getProperty('flutter.sdk')
 if (flutterRoot == null) {
-    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+    throw GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
 }
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
@@ -23,37 +23,83 @@ if (flutterVersionName == null) {
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.google.gms.google-services'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
+    ndkVersion flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
-
-    lintOptions {
-        disable 'InvalidPackage'
+    dexOptions {
+        incremental true
+        javaMaxHeapSize "4g"
+        preDexLibraries true
+        dexInProcess = true
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.example.chat_app"
-        minSdkVersion 16
+        applicationId "com.kotakcherry.app"
+        // You can update the following values to match your application needs.
+        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
+        minSdkVersion 23
         targetSdkVersion 33
         multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        resValue "string", "app_name", "Kotak Cherry"
+    }
+
+    signingConfigs {
+        release {
+        
+            
+            
+        }
     }
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
-            proguardFile 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
+
+    flavorDimensions "version"
+	productFlavors {
+        prod {
+			dimension "version"
+            //applicationIdSuffix ".prod"
+            resValue "string", "app_name", "Kotak Cherry"
+            buildConfigField "String", "APP_ENV", "\"prod\""
+		}
+		uat {
+			dimension "version"
+			applicationIdSuffix ""
+            buildConfigField "String", "APP_ENV", "\"uat\""
+		}
+        preprod {
+			dimension "version"
+			applicationIdSuffix ".preprod"
+            buildConfigField "String", "APP_ENV", '"prod"'
+		}
+	}
 }
 
 flutter {
@@ -62,4 +108,8 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "androidx.multidex:multidex:2.0.1"
+    implementation 'androidx.core:core:1.3.0'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
 }
+apply plugin: 'com.google.gms.google-services'

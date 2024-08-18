@@ -22,18 +22,6 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
-def keystoreProperties = new Properties()
-def keystorePropertiesFile = rootProject.file('key.properties')
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-}
-
-def keystoreProperties = new Properties()
-def keystorePropertiesFile = rootProject.file('key.properties')
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-}
-
 android {
     compileSdkVersion 34
     ndkVersion flutter.ndkVersion
@@ -66,14 +54,11 @@ android {
         multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-        resValue "string", "app_name", "Kotak Cherry"
     }
 
     signingConfigs {
         release {
         
-            
-            
         }
     }
     buildTypes {
@@ -85,25 +70,6 @@ android {
         }
     }
 
-    flavorDimensions "version"
-	productFlavors {
-        prod {
-			dimension "version"
-            //applicationIdSuffix ".prod"
-            resValue "string", "app_name", "Kotak Cherry"
-            buildConfigField "String", "APP_ENV", "\"prod\""
-		}
-		uat {
-			dimension "version"
-			applicationIdSuffix ""
-            buildConfigField "String", "APP_ENV", "\"uat\""
-		}
-        preprod {
-			dimension "version"
-			applicationIdSuffix ".preprod"
-            buildConfigField "String", "APP_ENV", '"prod"'
-		}
-	}
 }
 
 flutter {
@@ -113,4 +79,3 @@ flutter {
 dependencies {
  
 }
-apply plugin: 'com.google.gms.google-services'

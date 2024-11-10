@@ -34,21 +34,22 @@ Future<bool> handlePermissionsForCall(BuildContext context) async {
   Map<Permission, PermissionStatus> statuses = await [
     Permission.camera,
     Permission.microphone,
-    Permission.storage,
   ].request();
 
-  if (statuses[Permission.storage]?.isPermanentlyDenied ?? false) {
-    showCustomDialog(
-      context,
-      "Permission Required",
-      "Storage Permission Required for Video Call",
-      () {
-        Navigator.pop(context);
-        openAppSettings();
-      },
-    );
-    return false;
-  } else if (statuses[Permission.camera]?.isPermanentlyDenied ?? false) {
+  // if (statuses[Permission.manageExternalStorage]?.isPermanentlyDenied ??
+  //     false) {
+  //   showCustomDialog(
+  //     context,
+  //     "Permission Required",
+  //     "Storage Permission Required for Video Call",
+  //     () {
+  //       Navigator.pop(context);
+  //       openAppSettings();
+  //     },
+  //   );
+  //   return false;
+  // }
+  if (statuses[Permission.camera]?.isPermanentlyDenied ?? false) {
     showCustomDialog(
       context,
       "Permission Required",
@@ -71,10 +72,12 @@ Future<bool> handlePermissionsForCall(BuildContext context) async {
     );
     return false;
   }
+  print(statuses[Permission.manageExternalStorage]);
 
-  if (statuses[Permission.storage]?.isDenied ?? false) {
-    return false;
-  } else if (statuses[Permission.camera]?.isDenied ?? false) {
+  // if (statuses[Permission.manageExternalStorage]?.isDenied ?? false) {
+  //   return false;
+  // } else
+  if (statuses[Permission.camera]?.isDenied ?? false) {
     return false;
   } else if (statuses[Permission.microphone]?.isDenied ?? false) {
     return false;

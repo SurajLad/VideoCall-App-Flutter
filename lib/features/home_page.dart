@@ -14,9 +14,7 @@ class HomePage extends StatelessWidget {
         children: [
           Container(
             margin: const EdgeInsets.only(top: 60, left: 30),
-            padding: const EdgeInsets.only(
-              right: 20,
-            ),
+            padding: const EdgeInsets.only(right: 20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,136 +36,132 @@ class HomePage extends StatelessWidget {
           Expanded(
             child: Container(
               width: MediaQuery.of(context).size.width,
-              margin: const EdgeInsets.only(
-                top: 30,
-              ),
-              padding: const EdgeInsets.only(
-                top: 30,
-              ),
+              margin: const EdgeInsets.only(top: 30),
+              padding: const EdgeInsets.only(right: 24, top: 42, bottom: 16),
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(25),
-                      topRight: Radius.circular(25))),
-              child: Center(
-                  child: Column(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(25),
+                  topRight: Radius.circular(25),
+                ),
+              ),
+              child: Column(
                 children: [
-                  Flexible(
-                    flex: 4,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10, right: 10),
-                      child: TextButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (_) {
-                              return CreateRoomDialog();
-                            },
-                          );
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) {
+                          return CreateRoomDialog();
                         },
-                        child: Row(
-                          children: [
-                            Flexible(
-                              flex: 7,
-                              child: Image.asset(
-                                "assets/create_meeting_vector.png",
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                            Flexible(
-                              flex: 4,
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Text(
-                                    "Create Room",
-                                    style: AppTextStyles.large.copyWith(
-                                        color: const Color(0xFF1A1E78)),
-                                  ),
-                                  Text(
-                                    "create a unique agora room and ask others to join the same.",
-                                    style: AppTextStyles.regular.copyWith(
-                                        color: const Color(0xFF1A1E78)),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                      );
+                    },
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 6,
+                          child: Image.asset(
+                            "assets/create_meeting_vector.png",
+                            fit: BoxFit.fill,
+                          ),
                         ),
-                      ),
+                        Expanded(
+                          flex: 4,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Create Room",
+                                style: AppTextStyles.large.copyWith(
+                                  color: const Color(0xFF1A1E78),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                "create a unique agora room and ask others to join the same.",
+                                style: AppTextStyles.regular.copyWith(
+                                  color: const Color(0xFF1A1E78),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Flexible(
-                    flex: 2,
-                    child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: 2,
-                        margin: const EdgeInsets.all(20),
-                        color: const Color(0xFF1A1E78)),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 2,
+                    margin:
+                        const EdgeInsets.only(left: 24, right: 24, bottom: 32),
+                    color: const Color(0xFF1A1E78),
                   ),
-                  Flexible(
-                    flex: 4,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10, right: 10),
-                      child: TextButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (_) {
-                              return JoinRoomDialog();
-                            },
-                          );
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (_) {
+                          return JoinRoomBottomSheet();
                         },
-                        child: Row(
-                          children: [
-                            Flexible(
-                                flex: 6,
-                                child: Image.asset(
-                                  "assets/join_meeting_vector.png",
-                                  fit: BoxFit.fill,
-                                )),
-                            Flexible(
-                              flex: 4,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Text(
-                                    "Join Room",
-                                    style: AppTextStyles.large.copyWith(
-                                        color: const Color(0xFF1A1E78)),
-                                  ),
-                                  Text(
-                                    "Join a agora room created by your friend.",
-                                    style: AppTextStyles.regular.copyWith(
-                                        color: const Color(0xFF1A1E78)),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                      );
+                    },
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 6,
+                          child: Image.asset(
+                            "assets/join_meeting_vector.png",
+                            fit: BoxFit.fill,
+                          ),
                         ),
-                      ),
+                        Expanded(
+                          flex: 4,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Join Room",
+                                style: AppTextStyles.large
+                                    .copyWith(color: const Color(0xFF1A1E78)),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                "Join a agora room created by your friend.",
+                                style: AppTextStyles.regular.copyWith(
+                                  color: const Color(0xFF1A1E78),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
-              )),
+              ),
             ),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color(0xFF1A1E78),
-        child: Icon(Icons.thumb_up_alt_outlined),
+        child: Icon(
+          Icons.thumb_up_alt_outlined,
+          color: Colors.white,
+        ),
         onPressed: () {
-          Get.snackbar("You Liked ?", "Please ★ My Project On Git :) ",
-              backgroundColor: Colors.white,
-              colorText: Color(0xFF1A1E78),
-              snackPosition: SnackPosition.BOTTOM);
+          Get.snackbar(
+            "You Liked ?",
+            "Please ★ My Project On Git :) ",
+            backgroundColor: Colors.white,
+            colorText: Color(0xFF1A1E78),
+            snackPosition: SnackPosition.BOTTOM,
+          );
         },
       ),
     );

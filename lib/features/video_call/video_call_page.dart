@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:chat_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
@@ -26,39 +27,40 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 
   Future<void> initAgora() async {
     // retrieve permissions
-    await [Permission.microphone, Permission.camera].request();
+    // await [Permission.microphone, Permission.camera].request();
 
     //create the engine
     _engine = createAgoraRtcEngine();
-    await _engine.initialize(RtcEngineContext(
-      appId: getAgoraAppId(),
-      channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
-    ));
+    await _engine.initialize(
+      RtcEngineContext(
+        appId: getAgoraAppId(),
+        channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
+      ),
+    );
 
     _engine.registerEventHandler(
       RtcEngineEventHandler(
         onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-          debugPrint("local user ${connection.localUid} joined");
+          log("local user ${connection.localUid} joined");
           setState(() {
             _localUserJoined = true;
           });
         },
         onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-          debugPrint("remote user $remoteUid joined");
+          log("remote user $remoteUid joined");
           setState(() {
             _remoteUid = remoteUid;
           });
         },
         onUserOffline: (RtcConnection connection, int remoteUid,
             UserOfflineReasonType reason) {
-          debugPrint("remote user $remoteUid left channel");
+          log("remote user $remoteUid left channel");
           setState(() {
             _remoteUid = null;
           });
         },
         onTokenPrivilegeWillExpire: (RtcConnection connection, String token) {
-          debugPrint(
-              '[onTokenPrivilegeWillExpire] connection: ${connection.toJson()}, token: $token');
+          log('[onTokenPrivilegeWillExpire] connection: ${connection.toJson()}, token: $token');
         },
       ),
     );
@@ -68,7 +70,8 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
     await _engine.startPreview();
 
     await _engine.joinChannel(
-      token: 'token',
+      token:
+          '007eJxTYJilfnyZacqT/cE/5M53u6d6HChh4/jxrC0r6nSKtteF+OkKDKlpBolGlkYGiRYmhibJZiYWKQaplkZppqbGSZZpKWbGknGH0xoCGRkmvy9iZWSAQBCfmcHRyZmBAQBDXB7V',
       channelId: widget.channelName,
       uid: 0,
       options: const ChannelMediaOptions(),

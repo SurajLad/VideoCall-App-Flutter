@@ -8,6 +8,7 @@
             "name": "VideoCall-App-Flutter",
             "request": "launch",
             "type": "dart"
+            
         },
         {
             "name": "VideoCall-App-Flutter (profile mode)",
@@ -20,6 +21,24 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
+        },
+        {
+            "name": "Android",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "emulator-5554"
+        },
+        {
+            "name": "iPhone",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "emulator-5556"
+        },
+    ],
+    "compounds": [
+        {
+            "name": "All Devices",
+            "configurations": ["Android", "iPhone"],
         }
     ]
 }

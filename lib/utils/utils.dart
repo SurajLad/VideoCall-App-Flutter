@@ -1,10 +1,15 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:share_plus/share_plus.dart';
 
 String getAgoraAppId() {
   return 'ef0a2920a8414c648d0e92f553b9fd63';
   // return "<YOUR APP ID HERE>"; // Return Your Agora App Id
+}
+
+String getAgoraAppCertificate() {
+  return 'd8fe908a26f54ce3b5ce471a9c1a0b27';
 }
 
 bool checkNoSignleDigit(int no) {
@@ -23,11 +28,9 @@ String generateRandomString(int len) {
 }
 
 void shareToApps(String roomId) async {
-  // await FlutterShare.share(
-  //   title: 'Video Call Invite',
-  //   text:
-  //       'Hey There, Lets Connect via Video call in App using code : ' + roomId,
-  // );
+  await Share.share(
+    'Hey There, Lets Connect via Video call in App using code : ' + roomId,
+  );
 }
 
 Future<bool> handlePermissionsForCall(BuildContext context) async {
@@ -120,4 +123,45 @@ void showCustomDialog(
       );
     },
   );
+}
+
+int getNetworkQuality(int txQuality) {
+  switch (txQuality) {
+    case 0:
+      return 2;
+
+    case 1:
+      return 4;
+
+    case 2:
+      return 3;
+
+    case 3:
+      return 2;
+
+    case 4:
+      return 1;
+
+    case 4:
+      return 0;
+  }
+  return 0;
+}
+
+Color getNetworkQualityBarColor(int txQuality) {
+  switch (txQuality) {
+    case 0:
+      return Colors.green;
+    case 1:
+      return Colors.green;
+    case 2:
+      return Colors.yellow;
+    case 3:
+      return Colors.redAccent;
+    case 4:
+      return Colors.red;
+    case 4:
+      return Colors.red;
+  }
+  return Colors.yellow;
 }

@@ -1,12 +1,17 @@
 import 'dart:async';
-import 'dart:developer';
+import 'dart:developer' as dev;
+import 'dart:math';
+import 'package:chat_app/features/video_call/controller/video_call_controller.dart';
 import 'package:chat_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:get/get.dart';
 
 class VideoCallScreen extends StatefulWidget {
-  VideoCallScreen({Key? key, required this.channelName}) : super(key: key);
+  VideoCallScreen({
+    Key? key,
+    required this.channelName,
+  }) : super(key: key);
 
   final String channelName;
 
@@ -15,67 +20,252 @@ class VideoCallScreen extends StatefulWidget {
 }
 
 class _VideoCallScreenState extends State<VideoCallScreen> {
-  int? _remoteUid;
-  bool _localUserJoined = false;
-  late RtcEngine _engine;
+  // int? _remoteUid;
+  // late RtcEngine _engine;
+
+  late AgoraController agoraController =
+      Get.put<AgoraController>(AgoraController(
+    channel: widget.channelName,
+  ));
 
   @override
   void initState() {
+    // initAgora();
     super.initState();
-    initAgora();
   }
 
-  Future<void> initAgora() async {
-    // retrieve permissions
-    // await [Permission.microphone, Permission.camera].request();
+  // Future<void> initAgora() async {
+  //   // final appId = '970CA35de60c44645bbae8a215061b33';
+  //   // final appCertificate = '5CFd2fd1755d40ecb72977518be15d3b';
+  //   // final channelName = '7d72365eb983485397e3e3f9d460bdda';
 
-    //create the engine
-    _engine = createAgoraRtcEngine();
-    await _engine.initialize(
-      RtcEngineContext(
-        appId: getAgoraAppId(),
-        channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
+  //   // create the engine
+  //   _engine = createAgoraRtcEngine();
+
+  //   await _engine.initialize(
+  //     RtcEngineContext(
+  //       appId: getAgoraAppId(),
+  //       channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
+  //     ),
+  //   );
+
+  //   _engine.registerEventHandler(
+  //     RtcEngineEventHandler(
+  //       onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
+  //         dev.log("local user ${connection.localUid} joined");
+
+  //         agoraController.isUserJoined.value = true;
+  //       },
+  //       onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
+  //         dev.log("remote user $remoteUid joined");
+
+  //         _remoteUid = remoteUid;
+  //       },
+  //       onUserOffline: (RtcConnection connection, int remoteUid,
+  //           UserOfflineReasonType reason) {
+  //         dev.log("remote user $remoteUid left channel");
+
+  //         _remoteUid = null;
+  //       },
+  //       onTokenPrivilegeWillExpire: (RtcConnection connection, String token) {
+  //         dev.log(
+  //             '[onTokenPrivilegeWillExpire] connection: ${connection.toJson()}, token: $token');
+  //       },
+  //       onError: (err, msg) {
+  //         dev.log('=========================');
+  //         // ignore: sdk_version_since
+  //         dev.log('${err.name}');
+  //         dev.log('$msg');
+
+  //         dev.log('=========================');
+  //       },
+  //     ),
+  //   );
+
+  //   await _engine.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
+  //   await _engine.enableVideo();
+  //   await _engine.startPreview();
+
+  //   await _engine.joinChannel(
+  //     token: agoraController.agoraAuthToken,
+  //     channelId: widget.channelName,
+  //     uid: agoraController.uid,
+  //     options: const ChannelMediaOptions(),
+  //   );
+  // }
+
+  Future<void> _dispose() async {
+    await agoraController.engine.leaveChannel();
+    await agoraController.engine.release();
+    // await _engine.leaveChannel();
+    // await _engine.release();
+  }
+
+  // Create UI with local view and remote view
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Obx(
+        () {
+          final totalRemoteusers = agoraController.remoteUsers.length;
+          return Column(
+            children: [
+              Expanded(
+                flex: 5,
+                child: _remoteVideo(),
+              ),
+              const SizedBox(height: 8),
+              Expanded(
+                flex: 5,
+                child: Obx(
+                  () {
+                    return Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(16),
+                          bottomRight: Radius.circular(16),
+                        ),
+                      ),
+                      child: agoraController.isJoined.value
+                          ? AgoraVideoView(
+                              controller: VideoViewController(
+                                rtcEngine: agoraController.engine,
+                                canvas: VideoCanvas(uid: 0),
+                              ),
+                            )
+                          : Center(
+                              child: const CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            ),
+                    );
+                  },
+                ),
+              ),
+              // Bottom Controls
+              Expanded(
+                flex: 1,
+                child: Container(
+                  height: 80,
+                  color: Colors.black,
+                  padding: const EdgeInsets.only(top: 2),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Obx(
+                        () {
+                          return InkWell(
+                            onTap: () {
+                              agoraController.onToggleMuteAudio();
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: agoraController.muted.value
+                                    ? Colors.white12
+                                    : Colors.blueAccent,
+                              ),
+                              child: Icon(
+                                agoraController.muted.value
+                                    ? Icons.mic
+                                    : Icons.mic_off,
+                                color: Colors.white,
+                                size: 26,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(width: 16),
+                      Obx(
+                        () {
+                          return InkWell(
+                            onTap: () {
+                              agoraController.onSwitchCamera();
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: agoraController.muteVideo.value
+                                    ? Colors.white12
+                                    : Colors.blueAccent,
+                              ),
+                              child: Icon(
+                                agoraController.muteVideo.value
+                                    ? Icons.camera_front
+                                    : Icons.photo_camera_back,
+                                color: Colors.white,
+                                size: 26,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(width: 16),
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white12,
+                        ),
+                        child: Icon(
+                          Icons.video_call_sharp,
+                          color: Colors.white,
+                          size: 26,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.red,
+                          ),
+                          child: Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: 26,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
+  }
 
-    _engine.registerEventHandler(
-      RtcEngineEventHandler(
-        onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-          log("local user ${connection.localUid} joined");
-          setState(() {
-            _localUserJoined = true;
-          });
-        },
-        onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-          log("remote user $remoteUid joined");
-          setState(() {
-            _remoteUid = remoteUid;
-          });
-        },
-        onUserOffline: (RtcConnection connection, int remoteUid,
-            UserOfflineReasonType reason) {
-          log("remote user $remoteUid left channel");
-          setState(() {
-            _remoteUid = null;
-          });
-        },
-        onTokenPrivilegeWillExpire: (RtcConnection connection, String token) {
-          log('[onTokenPrivilegeWillExpire] connection: ${connection.toJson()}, token: $token');
-        },
-      ),
-    );
-
-    await _engine.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
-    await _engine.enableVideo();
-    await _engine.startPreview();
-
-    await _engine.joinChannel(
-      token:
-          '007eJxTYJilfnyZacqT/cE/5M53u6d6HChh4/jxrC0r6nSKtteF+OkKDKlpBolGlkYGiRYmhibJZiYWKQaplkZppqbGSZZpKWbGknGH0xoCGRkmvy9iZWSAQBCfmcHRyZmBAQBDXB7V',
-      channelId: widget.channelName,
-      uid: 0,
-      options: const ChannelMediaOptions(),
-    );
+  // Display remote user's video
+  Widget _remoteVideo() {
+    if (agoraController.remoteUidOne != null) {
+      return AgoraVideoView(
+        controller: VideoViewController.remote(
+          rtcEngine: agoraController.engine,
+          canvas: VideoCanvas(uid: agoraController.remoteUidOne),
+          connection: RtcConnection(
+            channelId: widget.channelName,
+          ),
+        ),
+      );
+    } else {
+      return const Text(
+        'Please wait for remote user to join',
+        style: TextStyle(color: Colors.white),
+        textAlign: TextAlign.center,
+      );
+    }
   }
 
   @override
@@ -83,63 +273,6 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
     super.dispose();
 
     _dispose();
-  }
-
-  Future<void> _dispose() async {
-    await _engine.leaveChannel();
-    await _engine.release();
-  }
-
-  // Create UI with local view and remote view
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Agora Video Call'),
-      ),
-      body: Stack(
-        children: [
-          Center(
-            child: _remoteVideo(),
-          ),
-          Align(
-            alignment: Alignment.topLeft,
-            child: SizedBox(
-              width: 100,
-              height: 150,
-              child: Center(
-                child: _localUserJoined
-                    ? AgoraVideoView(
-                        controller: VideoViewController(
-                          rtcEngine: _engine,
-                          canvas: const VideoCanvas(uid: 0),
-                        ),
-                      )
-                    : const CircularProgressIndicator(),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Display remote user's video
-  Widget _remoteVideo() {
-    if (_remoteUid != null) {
-      return AgoraVideoView(
-        controller: VideoViewController.remote(
-          rtcEngine: _engine,
-          canvas: VideoCanvas(uid: _remoteUid),
-          connection: RtcConnection(channelId: widget.channelName),
-        ),
-      );
-    } else {
-      return const Text(
-        'Please wait for remote user to join',
-        textAlign: TextAlign.center,
-      );
-    }
   }
 }
 
@@ -744,34 +877,5 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 //   }
 // }
 
-/// Get your own App ID at https://dashboard.agora.io/
-// String get appId {
-//   // Allow pass an `appId` as an environment variable with name `TEST_APP_ID` by using --dart-define
-//   return const String.fromEnvironment('TEST_APP_ID',
-//       defaultValue: '<YOUR_APP_ID>');
-// }
-
-/// Please refer to https://docs.agora.io/en/Agora%20Platform/token
-// String get token {
-//   // Allow pass a `token` as an environment variable with name `TEST_TOKEN` by using --dart-define
-//   return const String.fromEnvironment('TEST_TOKEN',
-//       defaultValue: '<YOUR_TOKEN>');
-// }
-
-/// Your channel ID
-String get channelId {
-  // Allow pass a `channelId` as an environment variable with name `TEST_CHANNEL_ID` by using --dart-define
-  return const String.fromEnvironment(
-    'TEST_CHANNEL_ID',
-    defaultValue: '<YOUR_CHANNEL_ID>',
-  );
-}
-
-/// Your int user ID
-const int uid = 0;
-
 /// Your user ID for the screen sharing
 const int screenSharingUid = 10;
-
-/// Your string user ID
-const String stringUid = '0';

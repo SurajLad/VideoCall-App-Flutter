@@ -81,6 +81,114 @@ class AgoraController {
       ),
     );
 
+    addEventHandlers();
+
+    // engine.registerEventHandler(
+    //   RtcEngineEventHandler(
+    //     onConnectionStateChanged: (connection, state, reason) {
+    //       dev.log("Connection State Changed ${state} $reason");
+    //       isJoined.value = true;
+    //     },
+    //     onLeaveChannel: (connection, stats) {
+    //       dev.log("local user ${connection.localUid} left");
+    //       isJoined.value = false;
+    //       remoteUsers.clear();
+    //     },
+    //     onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
+    //       dev.log("local user ${connection.localUid} joined");
+
+    //       isJoined.value = true;
+    //     },
+    //     onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
+    //       dev.log("remote user $remoteUid joined");
+
+    //       remoteUsers.add(remoteUid);
+
+    //       remoteUidOne = remoteUid;
+    //     },
+    //     onUserOffline: (RtcConnection connection, int remoteUid,
+    //         UserOfflineReasonType reason) {
+    //       dev.log("remote user $remoteUid left channel");
+
+    //       remoteUsers.remove(remoteUid);
+
+    //       remoteUidOne = null;
+    //     },
+    //     onTokenPrivilegeWillExpire: (RtcConnection connection, String token) {
+    //       dev.log(
+    //           '[onTokenPrivilegeWillExpire] connection: ${connection.toJson()}, token: $token');
+    //     },
+    //     onNetworkQuality: (connection, remoteUid, txQuality, rxQuality) {
+    //       networkQuality = getNetworkQuality(txQuality.index);
+    //       networkQualityBarColor = getNetworkQualityBarColor(txQuality.index);
+    //     },
+    //     onFirstRemoteVideoFrame:
+    //         (connection, remoteUid, width, height, elapsed) {
+    //       final info = 'firstRemoteVideo: $remoteUid ${width}x $height';
+    //       _infoStrings.add(info);
+    //     },
+    //     onError: (err, msg) {
+    //       dev.log('=========================');
+    //       // ignore: sdk_version_since
+    //       dev.log('${err.name}');
+    //       dev.log('$msg');
+    //       dev.log('=========================');
+    //     },
+    //   ),
+    // );
+
+    await engine.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
+    await engine.enableVideo();
+    await engine.startPreview();
+
+    joinChannel();
+
+    // await engine.joinChannel(
+    //   token: agoraAuthToken,
+    //   channelId: channelId,
+    //   uid: uid,
+    //   options: const ChannelMediaOptions(),
+    // );
+  }
+
+  void _generateAgoraAuthToken() {
+    final role = RtcRole.publisher;
+
+    final expirationInSeconds = 3600;
+    final currentTimestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    final expireTimestamp = currentTimestamp + expirationInSeconds;
+
+    agoraAuthToken = RtcTokenBuilder.build(
+      appId: getAgoraAppId(),
+      appCertificate: getAgoraAppCertificate(),
+      channelName: channelId,
+      uid: uid.toString(),
+      role: role,
+      expireTimestamp: expireTimestamp,
+    );
+  }
+
+  Future<void> initEngine() async {
+    await engine.initialize(
+      RtcEngineContext(
+        appId: getAgoraAppId(),
+        channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
+      ),
+    );
+    // addEventHandlers();
+    await engine.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
+    await engine.enableVideo();
+    // await engine.setVideoEncoderConfiguration(
+    //   const VideoEncoderConfiguration(
+    //     dimensions: VideoDimensions(width: 640, height: 360),
+    //     frameRate: 15,
+    //     bitrate: 0,
+    //   ),
+    // );
+    await engine.startPreview();
+  }
+
+  void addEventHandlers() {
     engine.registerEventHandler(
       RtcEngineEventHandler(
         onConnectionStateChanged: (connection, state, reason) {
@@ -134,121 +242,14 @@ class AgoraController {
         },
       ),
     );
-
-    await engine.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
-    await engine.enableVideo();
-    await engine.startPreview();
-
-    await engine.joinChannel(
-      token: agoraAuthToken,
-      channelId: channelId,
-      uid: uid,
-      options: const ChannelMediaOptions(),
-    );
   }
-
-  void _generateAgoraAuthToken() {
-    final role = RtcRole.publisher;
-
-    final expirationInSeconds = 3600;
-    final currentTimestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    final expireTimestamp = currentTimestamp + expirationInSeconds;
-
-    agoraAuthToken = RtcTokenBuilder.build(
-      appId: getAgoraAppId(),
-      appCertificate: getAgoraAppCertificate(),
-      channelName: channelId,
-      uid: uid.toString(),
-      role: role,
-      expireTimestamp: expireTimestamp,
-    );
-  }
-
-  Future<void> initEngine() async {
-    await engine.initialize(
-      RtcEngineContext(
-        appId: getAgoraAppId(),
-        channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
-      ),
-    );
-    // addEventHandlers();
-    await engine.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
-    await engine.enableVideo();
-    // await engine.setVideoEncoderConfiguration(
-    //   const VideoEncoderConfiguration(
-    //     dimensions: VideoDimensions(width: 640, height: 360),
-    //     frameRate: 15,
-    //     bitrate: 0,
-    //   ),
-    // );
-    await engine.startPreview();
-  }
-
-  // void addEventHandlers() {
-  //   engine.registerEventHandler(
-  //     RtcEngineEventHandler(
-  //       onError: (ErrorCodeType err, String msg) {
-  //         dev.log("======================================");
-  //         dev.log("             ERROR Joined              ");
-  //         dev.log("======================================");
-  //         dev.log('[onError] err: $err, msg: $msg');
-  //       },
-  //       onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-  //         dev.log(
-  //           '[onJoinChannelSuccess] connection: ${connection.toJson()} elapsed: $elapsed',
-  //         );
-
-  //         isJoined.value = true;
-  //       },
-  //       onUserJoined: (RtcConnection connection, int rUid, int elapsed) {
-  //         dev.log("======================================");
-  //         dev.log("             User Joined              ");
-  //         dev.log("======================================");
-  //         dev.log(
-  //           '[onUserJoined] connection: ${connection.toJson()} remoteUid: $rUid elapsed: $elapsed',
-  //         );
-  //         remoteUid.add(rUid);
-
-  //         if (!meetingTimer.isActive) {
-  //           startMeetingTimer();
-  //         } else {
-  //           startMeetingTimer();
-  //         }
-  //         isSomeOneJoinedCall.value = true;
-  //       },
-  //       onUserOffline:
-  //           (RtcConnection connection, int rUid, UserOfflineReasonType reason) {
-  //         dev.log(
-  //             '[onUserOffline] connection: ${connection.toJson()}  rUid: $rUid reason: $reason');
-
-  //         remoteUid.removeWhere((element) => element == rUid);
-  //       },
-  //       onLeaveChannel: (RtcConnection connection, RtcStats stats) {
-  //         dev.log(
-  //             '[onLeaveChannel] connection: ${connection.toJson()} stats: ${stats.toJson()}');
-
-  //         isJoined.value = false;
-  //         remoteUid.clear();
-  //       },
-  //       onNetworkQuality: (connection, remoteUid, txQuality, rxQuality) {
-  //         networkQuality = getNetworkQuality(txQuality.index);
-  //         networkQualityBarColor = getNetworkQualityBarColor(txQuality.index);
-  //       },
-  //       onFirstRemoteVideoFrame:
-  //           (connection, remoteUid, width, height, elapsed) {
-  //         final info = 'firstRemoteVideo: $remoteUid ${width}x $height';
-  //         _infoStrings.add(info);
-  //       },
-  //     ),
-  //   );
-  // }
 
   Future<void> joinChannel() async {
     await engine.joinChannel(
       token: agoraAuthToken,
       channelId: channelId,
       uid: uid,
-      options: ChannelMediaOptions(),
+      options: const ChannelMediaOptions(),
     );
   }
 

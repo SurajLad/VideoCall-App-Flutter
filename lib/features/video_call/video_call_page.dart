@@ -97,8 +97,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   Future<void> _dispose() async {
     await agoraController.engine.leaveChannel();
     await agoraController.engine.release();
-    // await _engine.leaveChannel();
-    // await _engine.release();
+    Get.delete<AgoraController>();
   }
 
   // Create UI with local view and remote view
@@ -144,102 +143,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                 ),
               ),
               // Bottom Controls
-              Expanded(
-                flex: 1,
-                child: Container(
-                  height: 80,
-                  color: Colors.black,
-                  padding: const EdgeInsets.only(top: 2),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Obx(
-                        () {
-                          return InkWell(
-                            onTap: () {
-                              agoraController.onToggleMuteAudio();
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(14),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: agoraController.muted.value
-                                    ? Colors.white12
-                                    : Colors.blueAccent,
-                              ),
-                              child: Icon(
-                                agoraController.muted.value
-                                    ? Icons.mic
-                                    : Icons.mic_off,
-                                color: Colors.white,
-                                size: 26,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(width: 16),
-                      Obx(
-                        () {
-                          return InkWell(
-                            onTap: () {
-                              agoraController.onSwitchCamera();
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(14),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: agoraController.muteVideo.value
-                                    ? Colors.white12
-                                    : Colors.blueAccent,
-                              ),
-                              child: Icon(
-                                agoraController.muteVideo.value
-                                    ? Icons.camera_front
-                                    : Icons.photo_camera_back,
-                                color: Colors.white,
-                                size: 26,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(width: 16),
-                      Container(
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white12,
-                        ),
-                        child: Icon(
-                          Icons.video_call_sharp,
-                          color: Colors.white,
-                          size: 26,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.red,
-                          ),
-                          child: Icon(
-                            Icons.close,
-                            color: Colors.white,
-                            size: 26,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
+              _BottomControls(agoraController: agoraController),
             ],
           );
         },
@@ -273,6 +177,113 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
     super.dispose();
 
     _dispose();
+  }
+}
+
+class _BottomControls extends StatelessWidget {
+  const _BottomControls({
+    Key? key,
+    required this.agoraController,
+  }) : super(key: key);
+
+  final AgoraController agoraController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      flex: 1,
+      child: Container(
+        height: 80,
+        color: Colors.black,
+        padding: const EdgeInsets.only(top: 2),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Obx(
+              () {
+                return InkWell(
+                  onTap: () {
+                    agoraController.onToggleMuteAudio();
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: agoraController.muted.value
+                          ? Colors.white12
+                          : Colors.blueAccent,
+                    ),
+                    child: Icon(
+                      agoraController.muted.value ? Icons.mic : Icons.mic_off,
+                      color: Colors.white,
+                      size: 26,
+                    ),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(width: 16),
+            Obx(
+              () {
+                return InkWell(
+                  onTap: () {
+                    agoraController.onSwitchCamera();
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: agoraController.muteVideo.value
+                          ? Colors.white12
+                          : Colors.blueAccent,
+                    ),
+                    child: Icon(
+                      agoraController.muteVideo.value
+                          ? Icons.camera_front
+                          : Icons.photo_camera_back,
+                      color: Colors.white,
+                      size: 26,
+                    ),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(width: 16),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white12,
+              ),
+              child: Icon(
+                Icons.video_call_sharp,
+                color: Colors.white,
+                size: 26,
+              ),
+            ),
+            const SizedBox(width: 12),
+            InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.red,
+                ),
+                child: Icon(
+                  Icons.close,
+                  color: Colors.white,
+                  size: 26,
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
 

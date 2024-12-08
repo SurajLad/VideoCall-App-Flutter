@@ -1,6 +1,7 @@
-import 'package:chat_app/UI/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import 'features/home_page.dart';
 
 void main() {
   runApp(MyApp());

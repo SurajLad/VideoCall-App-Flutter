@@ -6,8 +6,6 @@ import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:agora_token_service/agora_token_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_rx/get_rx.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
 
 import '../../../utils/utils.dart';
 
@@ -83,72 +81,11 @@ class AgoraController {
 
     addEventHandlers();
 
-    // engine.registerEventHandler(
-    //   RtcEngineEventHandler(
-    //     onConnectionStateChanged: (connection, state, reason) {
-    //       dev.log("Connection State Changed ${state} $reason");
-    //       isJoined.value = true;
-    //     },
-    //     onLeaveChannel: (connection, stats) {
-    //       dev.log("local user ${connection.localUid} left");
-    //       isJoined.value = false;
-    //       remoteUsers.clear();
-    //     },
-    //     onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-    //       dev.log("local user ${connection.localUid} joined");
-
-    //       isJoined.value = true;
-    //     },
-    //     onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-    //       dev.log("remote user $remoteUid joined");
-
-    //       remoteUsers.add(remoteUid);
-
-    //       remoteUidOne = remoteUid;
-    //     },
-    //     onUserOffline: (RtcConnection connection, int remoteUid,
-    //         UserOfflineReasonType reason) {
-    //       dev.log("remote user $remoteUid left channel");
-
-    //       remoteUsers.remove(remoteUid);
-
-    //       remoteUidOne = null;
-    //     },
-    //     onTokenPrivilegeWillExpire: (RtcConnection connection, String token) {
-    //       dev.log(
-    //           '[onTokenPrivilegeWillExpire] connection: ${connection.toJson()}, token: $token');
-    //     },
-    //     onNetworkQuality: (connection, remoteUid, txQuality, rxQuality) {
-    //       networkQuality = getNetworkQuality(txQuality.index);
-    //       networkQualityBarColor = getNetworkQualityBarColor(txQuality.index);
-    //     },
-    //     onFirstRemoteVideoFrame:
-    //         (connection, remoteUid, width, height, elapsed) {
-    //       final info = 'firstRemoteVideo: $remoteUid ${width}x $height';
-    //       _infoStrings.add(info);
-    //     },
-    //     onError: (err, msg) {
-    //       dev.log('=========================');
-    //       // ignore: sdk_version_since
-    //       dev.log('${err.name}');
-    //       dev.log('$msg');
-    //       dev.log('=========================');
-    //     },
-    //   ),
-    // );
-
     await engine.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
     await engine.enableVideo();
     await engine.startPreview();
 
     joinChannel();
-
-    // await engine.joinChannel(
-    //   token: agoraAuthToken,
-    //   channelId: channelId,
-    //   uid: uid,
-    //   options: const ChannelMediaOptions(),
-    // );
   }
 
   void _generateAgoraAuthToken() {

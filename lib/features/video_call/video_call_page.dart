@@ -22,77 +22,13 @@ class VideoCallScreen extends StatefulWidget {
 class _VideoCallScreenState extends State<VideoCallScreen> {
   // int? _remoteUid;
   // late RtcEngine _engine;
-
   late AgoraController agoraController =
-      Get.put<AgoraController>(AgoraController(
-    channel: widget.channelName,
-  ));
+      Get.put<AgoraController>(AgoraController(channel: widget.channelName));
 
   @override
   void initState() {
-    // initAgora();
     super.initState();
   }
-
-  // Future<void> initAgora() async {
-  //   // final appId = '970CA35de60c44645bbae8a215061b33';
-  //   // final appCertificate = '5CFd2fd1755d40ecb72977518be15d3b';
-  //   // final channelName = '7d72365eb983485397e3e3f9d460bdda';
-
-  //   // create the engine
-  //   _engine = createAgoraRtcEngine();
-
-  //   await _engine.initialize(
-  //     RtcEngineContext(
-  //       appId: getAgoraAppId(),
-  //       channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
-  //     ),
-  //   );
-
-  //   _engine.registerEventHandler(
-  //     RtcEngineEventHandler(
-  //       onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-  //         dev.log("local user ${connection.localUid} joined");
-
-  //         agoraController.isUserJoined.value = true;
-  //       },
-  //       onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-  //         dev.log("remote user $remoteUid joined");
-
-  //         _remoteUid = remoteUid;
-  //       },
-  //       onUserOffline: (RtcConnection connection, int remoteUid,
-  //           UserOfflineReasonType reason) {
-  //         dev.log("remote user $remoteUid left channel");
-
-  //         _remoteUid = null;
-  //       },
-  //       onTokenPrivilegeWillExpire: (RtcConnection connection, String token) {
-  //         dev.log(
-  //             '[onTokenPrivilegeWillExpire] connection: ${connection.toJson()}, token: $token');
-  //       },
-  //       onError: (err, msg) {
-  //         dev.log('=========================');
-  //         // ignore: sdk_version_since
-  //         dev.log('${err.name}');
-  //         dev.log('$msg');
-
-  //         dev.log('=========================');
-  //       },
-  //     ),
-  //   );
-
-  //   await _engine.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
-  //   await _engine.enableVideo();
-  //   await _engine.startPreview();
-
-  //   await _engine.joinChannel(
-  //     token: agoraController.agoraAuthToken,
-  //     channelId: widget.channelName,
-  //     uid: agoraController.uid,
-  //     options: const ChannelMediaOptions(),
-  //   );
-  // }
 
   Future<void> _dispose() async {
     await agoraController.engine.leaveChannel();
@@ -105,48 +41,85 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Obx(
-        () {
-          final totalRemoteusers = agoraController.remoteUsers.length;
-          return Column(
-            children: [
-              Expanded(
-                flex: 5,
-                child: _remoteVideo(),
-              ),
-              const SizedBox(height: 8),
-              Expanded(
-                flex: 5,
-                child: Obx(
-                  () {
-                    return Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(16),
-                          bottomRight: Radius.circular(16),
+      body: Stack(
+        children: [
+          Obx(
+            () {
+              final totalRemoteusers = agoraController.remoteUsers.length;
+              switch (totalRemoteusers) {
+                case 0:
+                  return Obx(
+                    () {
+                      return Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(16),
+                            bottomRight: Radius.circular(16),
+                          ),
                         ),
-                      ),
-                      child: agoraController.isJoined.value
-                          ? AgoraVideoView(
-                              controller: VideoViewController(
-                                rtcEngine: agoraController.engine,
-                                canvas: VideoCanvas(uid: 0),
+                        child: agoraController.isJoined.value
+                            ? AgoraVideoView(
+                                controller: VideoViewController(
+                                  rtcEngine: agoraController.engine,
+                                  canvas: VideoCanvas(uid: 0),
+                                ),
+                              )
+                            : Center(
+                                child: const CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
                               ),
-                            )
-                          : Center(
-                              child: const CircularProgressIndicator(
-                                color: Colors.white,
-                              ),
-                            ),
-                    );
-                  },
-                ),
-              ),
-              // Bottom Controls
-              _BottomControls(agoraController: agoraController),
-            ],
-          );
-        },
+                      );
+                    },
+                  );
+                case 1:
+                  break;
+                case 2:
+                  break;
+                case 3:
+                  break;
+              }
+              return Column(
+                children: [
+                  Expanded(
+                    flex: 5,
+                    child: _remoteVideo(),
+                  ),
+                  const SizedBox(height: 8),
+                  // Expanded(
+                  //   flex: 5,
+                  //   child: Obx(
+                  //     () {
+                  //       return Container(
+                  //         decoration: BoxDecoration(
+                  //           borderRadius: BorderRadius.only(
+                  //             bottomLeft: Radius.circular(16),
+                  //             bottomRight: Radius.circular(16),
+                  //           ),
+                  //         ),
+                  //         child: agoraController.isJoined.value
+                  //             ? AgoraVideoView(
+                  //                 controller: VideoViewController(
+                  //                   rtcEngine: agoraController.engine,
+                  //                   canvas: VideoCanvas(uid: 0),
+                  //                 ),
+                  //               )
+                  //             : Center(
+                  //                 child: const CircularProgressIndicator(
+                  //                   color: Colors.white,
+                  //                 ),
+                  //               ),
+                  //       );
+                  //     },
+                  //   ),
+                  // ),
+                  // Bottom Controls
+                ],
+              );
+            },
+          ),
+          _BottomControls(agoraController: agoraController),
+        ],
       ),
     );
   }
@@ -190,8 +163,8 @@ class _BottomControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      flex: 1,
+    return Align(
+      alignment: Alignment.bottomCenter,
       child: Container(
         height: 80,
         color: Colors.black,

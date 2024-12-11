@@ -20,11 +20,11 @@ class AgoraController {
   RxString meetingDurationTxt = "00:00".obs;
 
   // Agora utitilty
-  final muted = false.obs;
+  final isMuted = false.obs;
   final muteVideo = false.obs;
   final isJoined = false.obs;
 
-  bool backCamera = false;
+  final isBackCamera = false.obs;
   bool isHost = true;
 
   final isSomeOneJoinedCall = false.obs;
@@ -50,18 +50,18 @@ class AgoraController {
     init();
   }
 
-  void onToggleMuteAudio() {
-    muted.value = !muted.value;
-    engine.muteLocalAudioStream(muted.value);
+  void onToggleMuteAudio() async {
+    isMuted.value = !isMuted.value;
+    await engine.muteLocalAudioStream(isMuted.value);
   }
 
-  void onToggleMuteVideo() {
+  void onToggleMuteVideo() async {
     muteVideo.value = !muteVideo.value;
-    engine.muteLocalVideoStream(muteVideo.value);
+    await engine.muteLocalVideoStream(muteVideo.value);
   }
 
   void onSwitchCamera() {
-    backCamera = !backCamera;
+    isBackCamera.value = !isBackCamera.value;
     engine.switchCamera();
   }
 
@@ -146,6 +146,8 @@ class AgoraController {
           dev.log("remote user $remoteUid joined");
 
           remoteUsers.add(remoteUid);
+
+          startMeetingTimer();
 
           remoteUidOne = remoteUid;
         },

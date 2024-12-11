@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:chat_app/design_system/text_styles.dart';
 import 'package:chat_app/features/video_call/components/bottom_controls_section.dart';
 import 'package:chat_app/features/video_call/controller/video_call_controller.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 
   @override
   void initState() {
+    // Init State
     super.initState();
   }
 
@@ -35,16 +37,14 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Meeting Duration'),
-      ),
+      appBar: CustomAppBar(agoraController: agoraController),
       body: Stack(
         children: [
           Container(
             padding: const EdgeInsets.only(
               left: 16.0,
               right: 16.0,
-              bottom: 12.0,
+              bottom: 16.0,
               top: 0.0,
             ),
             child: Obx(
@@ -87,6 +87,32 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 
     _dispose();
   }
+}
+
+class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const CustomAppBar({Key? key, required this.agoraController})
+      : super(key: key);
+  final AgoraController agoraController;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      automaticallyImplyLeading: false,
+      centerTitle: true,
+      title: Obx(
+        () {
+          final duration = agoraController.meetingDurationTxt.value;
+          return Text(
+            'Meeting Duration : ${duration}',
+            style: AppTextStyles.regular.copyWith(color: Colors.black),
+          );
+        },
+      ),
+    );
+  }
+
+  @override
+  Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }
 
 class _FourUserView extends StatelessWidget {

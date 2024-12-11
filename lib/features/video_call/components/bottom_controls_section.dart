@@ -15,8 +15,7 @@ class BottomControlSection extends StatelessWidget {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
-        height: 80,
-        padding: const EdgeInsets.only(top: 2),
+        padding: const EdgeInsets.only(bottom: 24),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -28,23 +27,24 @@ class BottomControlSection extends StatelessWidget {
                     agoraController.onToggleMuteAudio();
                   },
                   child: Container(
-                    padding: const EdgeInsets.all(14),
+                    width: 64,
+                    height: 64,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: agoraController.muted.value
-                          ? Colors.white12
-                          : Colors.blueAccent,
+                      color: Color.fromARGB(255, 193, 195, 255),
+                      border: Border.all(color: Colors.black12),
                     ),
                     child: Icon(
-                      agoraController.muted.value ? Icons.mic : Icons.mic_off,
-                      color: Colors.white,
-                      size: 26,
+                      agoraController.isMuted.value
+                          ? Icons.mic_sharp
+                          : Icons.mic_off_sharp,
+                      color: Colors.black87,
                     ),
                   ),
                 );
               },
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 20),
             Obx(
               () {
                 return InkWell(
@@ -52,50 +52,64 @@ class BottomControlSection extends StatelessWidget {
                     agoraController.onSwitchCamera();
                   },
                   child: Container(
-                    padding: const EdgeInsets.all(14),
+                    width: 64,
+                    height: 64,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: agoraController.muteVideo.value
-                          ? Colors.white12
-                          : Colors.blueAccent,
+                      color: Color.fromARGB(255, 193, 195, 255),
+                      border: Border.all(color: Colors.black12),
                     ),
                     child: Icon(
-                      agoraController.muteVideo.value
+                      agoraController.isBackCamera.value
                           ? Icons.camera_front
-                          : Icons.photo_camera_back,
-                      color: Colors.white,
+                          : Icons.camera_rear,
+                      color: Colors.black87,
                       size: 26,
                     ),
                   ),
                 );
               },
             ),
-            const SizedBox(width: 16),
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white12,
-              ),
-              child: Icon(
-                Icons.video_call_sharp,
-                color: Colors.white,
-                size: 26,
-              ),
+            const SizedBox(width: 20),
+            Obx(
+              () {
+                return InkWell(
+                  onTap: () {
+                    agoraController.onToggleMuteVideo();
+                  },
+                  child: Container(
+                    width: 64,
+                    height: 64,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color.fromARGB(255, 193, 195, 255),
+                      border: Border.all(color: Colors.black12),
+                    ),
+                    child: Icon(
+                      agoraController.muteVideo.value
+                          ? Icons.videocam_off
+                          : Icons.videocam_sharp,
+                      color: Colors.black87,
+                      size: 26,
+                    ),
+                  ),
+                );
+              },
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 20),
             InkWell(
               onTap: () {
                 Navigator.pop(context);
               },
               child: Container(
-                padding: const EdgeInsets.all(14),
+                width: 64,
+                height: 64,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.red,
+                  color: Color.fromARGB(255, 252, 44, 29),
                 ),
                 child: Icon(
-                  Icons.close,
+                  Icons.call_end,
                   color: Colors.white,
                   size: 26,
                 ),

@@ -34,13 +34,21 @@
             "deviceId": "emulator-5556"
             // "deviceId": "adb-10BD7G11QA0003Z-iwaEqX._adb-tls-connect._tcp"
         },
+        {
+            "name": "iPhone2",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "emulator-5558"
+            // "deviceId": "adb-10BD7G11QA0003Z-iwaEqX._adb-tls-connect._tcp"
+        },
     ],
     "compounds": [
         {
             "name": "All Devices",
             "configurations": [
                 "Android",
-                "iPhone"
+                "iPhone",
+                // "iPhone2"
             ],
         }
     ]

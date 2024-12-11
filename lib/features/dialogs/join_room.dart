@@ -1,5 +1,5 @@
 import 'package:chat_app/utils/utils.dart';
-import 'package:chat_app/features/video_call/video_call_page.dart';
+import 'package:chat_app/features/video_call/view/video_call_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

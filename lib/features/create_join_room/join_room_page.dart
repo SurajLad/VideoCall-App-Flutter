@@ -1,4 +1,4 @@
-import 'package:chat_app/features/dialogs/create_room_page.dart';
+import 'package:chat_app/features/create_join_room/create_room_page.dart';
 import 'package:chat_app/utils/utils.dart';
 import 'package:chat_app/features/video_call/view/video_call_page.dart';
 import 'package:flutter/material.dart';
@@ -86,7 +86,8 @@ class JoinRoomPage extends StatelessWidget {
                         backgroundColor: Colors.white,
                         colorText: Color(0xFF1A1E78),
                         snackPosition: SnackPosition.BOTTOM,
-                        duration: Duration(milliseconds: 1500),
+                        duration: Duration(milliseconds: 1000),
+                        animationDuration: Duration(milliseconds: 750),
                       );
                     }
                   } else {
@@ -96,7 +97,8 @@ class JoinRoomPage extends StatelessWidget {
                       backgroundColor: Colors.white,
                       colorText: Color(0xFF1A1E78),
                       snackPosition: SnackPosition.BOTTOM,
-                      duration: Duration(milliseconds: 1500),
+                      duration: Duration(milliseconds: 1000),
+                      animationDuration: Duration(milliseconds: 750),
                     );
                   }
                 },

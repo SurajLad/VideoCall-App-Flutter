@@ -86,7 +86,7 @@ class BottomControlSection extends StatelessWidget {
                       border: Border.all(color: Colors.black12),
                     ),
                     child: Icon(
-                      agoraController.muteVideo.value
+                      agoraController.isVideoMuted.value
                           ? Icons.videocam_off
                           : Icons.videocam_sharp,
                       color: Colors.black87,

@@ -21,23 +21,19 @@ class AgoraController {
 
   // Agora utitilty
   final isMuted = false.obs;
-  final muteVideo = false.obs;
+  final isVideoMuted = false.obs;
   final isJoined = false.obs;
 
   final isBackCamera = false.obs;
-  bool isHost = true;
-
-  final isSomeOneJoinedCall = false.obs;
 
   RxList<int> remoteUsers = <int>[].obs;
   int? remoteUidOne;
 
-  // UI
+  // Network Quality
   int networkQuality = 3;
   Color networkQualityBarColor = Colors.green;
 
   String channelId = '';
-
   String agoraAuthToken = '';
 
   final uid = Random().nextInt(19000);
@@ -48,21 +44,6 @@ class AgoraController {
     channelId = channel;
     _generateAgoraAuthToken();
     init();
-  }
-
-  void onToggleMuteAudio() async {
-    isMuted.value = !isMuted.value;
-    await engine.muteLocalAudioStream(isMuted.value);
-  }
-
-  void onToggleMuteVideo() async {
-    muteVideo.value = !muteVideo.value;
-    await engine.muteLocalVideoStream(muteVideo.value);
-  }
-
-  void onSwitchCamera() {
-    isBackCamera.value = !isBackCamera.value;
-    engine.switchCamera();
   }
 
   Future<void> init() async {
@@ -217,5 +198,20 @@ class AgoraController {
         meetingDuration = meetingDuration + 1;
       },
     );
+  }
+
+  void onToggleMuteAudio() async {
+    isMuted.value = !isMuted.value;
+    await engine.muteLocalAudioStream(isMuted.value);
+  }
+
+  void onToggleMuteVideo() async {
+    isVideoMuted.value = !isVideoMuted.value;
+    await engine.muteLocalVideoStream(isVideoMuted.value);
+  }
+
+  void onSwitchCamera() {
+    isBackCamera.value = !isBackCamera.value;
+    engine.switchCamera();
   }
 }

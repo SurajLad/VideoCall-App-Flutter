@@ -1,5 +1,5 @@
-import 'package:chat_app/features/dialogs/create_room_page.dart';
-import 'package:chat_app/features/dialogs/join_room_page.dart';
+import 'package:chat_app/features/create_join_room/create_room_page.dart';
+import 'package:chat_app/features/create_join_room/join_room_page.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/design_system/text_styles.dart';
 import 'package:get/get.dart';

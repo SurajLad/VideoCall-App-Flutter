@@ -39,19 +39,6 @@ Future<bool> handlePermissionsForCall(BuildContext context) async {
     Permission.microphone,
   ].request();
 
-  // if (statuses[Permission.manageExternalStorage]?.isPermanentlyDenied ??
-  //     false) {
-  //   showCustomDialog(
-  //     context,
-  //     "Permission Required",
-  //     "Storage Permission Required for Video Call",
-  //     () {
-  //       Navigator.pop(context);
-  //       openAppSettings();
-  //     },
-  //   );
-  //   return false;
-  // }
   if (statuses[Permission.camera]?.isPermanentlyDenied ?? false) {
     showCustomDialog(
       context,
@@ -75,11 +62,7 @@ Future<bool> handlePermissionsForCall(BuildContext context) async {
     );
     return false;
   }
-  print(statuses[Permission.manageExternalStorage]);
 
-  // if (statuses[Permission.manageExternalStorage]?.isDenied ?? false) {
-  //   return false;
-  // } else
   if (statuses[Permission.camera]?.isDenied ?? false) {
     return false;
   } else if (statuses[Permission.microphone]?.isDenied ?? false) {

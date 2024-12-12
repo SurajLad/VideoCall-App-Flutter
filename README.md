@@ -1,5 +1,7 @@
 # Video-Chat App-Flutter
 
+<img src="Screenshots/app_icon.png" width="200" height="200">
+
 Video Calling App Made in Flutter with Agora.io
  
 #### Supported features:
@@ -17,11 +19,13 @@ Test App by Downloading Apk From Screenshot/app.apk
 
 #### Screenshots:
 
-<img src="Screenshots/homepage.jpg" width="300" height="600">
-<img src="Screenshots/create_room.jpg" width="300" height="600">
-<img src="Screenshots/join_room.jpg" width="300" height="600">
-<img src="Screenshots/VideoCall_Ui.jpg" width="300" height="600">
+<img src="Screenshots/1.1/home_page.png" width="300" height="600">
+<img src="Screenshots/1.1/create_room_page.png" width="300" height="600">
+<img src="Screenshots/1.1/join_room_page.png" width="300" height="600">
+<img src="Screenshots/1.1/two_users_call_view.png" width="300" height="600">
+<img src="Screenshots/1.1/three_users_view.png" width="300" height="600">
 
-#### Graphics Credits:
+#### Credits:
 - FlatIcons
 - FreePik
+- Agora.io

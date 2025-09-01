@@ -24,7 +24,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace 'com.example.chat_app'
-    compileSdkVersion 34
+    compileSdkVersion 35
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -39,13 +39,7 @@ android {
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
-    // dexOptions {
-    //     incremental true
-    //     javaMaxHeapSize "4g"
-    //     preDexLibraries true
-    //     dexInProcess = true
-    // }
-
+ 
     defaultConfig {
         applicationId "com.example.chat_app"
         // You can update the following values to match your application needs.
